@@ -1,0 +1,17 @@
+{
+  "name": "lrt-demo-website",
+  "version": "1.0.0",
+  "description": "LRT.lt demo website with Exacaster Analytics SDK",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "exacaster-analytics": "file:../services/dec-e2e-test/sdk/exacaster-analytics.tgz"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
