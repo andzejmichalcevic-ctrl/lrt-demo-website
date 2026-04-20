@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "exacaster-analytics": "file:../services/dec-e2e-test/sdk/exacaster-analytics.tgz"
+    "exacaster-analytics": "file:./exacaster-analytics.tgz"
   },
   "engines": {
     "node": ">=16.0.0"
