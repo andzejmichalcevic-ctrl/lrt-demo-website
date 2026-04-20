@@ -3,8 +3,9 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copy package.json and SDK file for dependencies
 COPY package.json ./
+COPY exacaster-analytics.tgz ./
 RUN npm install --production
 
 # Copy the rest of the application
