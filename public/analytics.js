@@ -40,7 +40,7 @@ document.addEventListener('click', (event) => {
     const article = event.target.closest('[data-article-id]');
     if (article) {
         const articleId = article.dataset.articleId;
-        const headline = article.querySelector('h1, h2, h3')?.textContent || 'Unknown';
+        const headline = article.querySelector('h1, h2, h3, p')?.textContent || 'Unknown';
         const category = article.querySelector('.category')?.textContent || 'General';
 
         Analytics.getInstance().track('Article Click', {
@@ -51,6 +51,11 @@ document.addEventListener('click', (event) => {
             sessionId: sessionId,
             timestamp: new Date().toISOString()
         });
+
+        // Navigate to article page
+        setTimeout(() => {
+            window.location.href = `/article/${articleId}`;
+        }, 100);
 
         // If it's a video article
         if (articleId && articleId.startsWith('v')) {
@@ -65,6 +70,18 @@ document.addEventListener('click', (event) => {
                 timestamp: new Date().toISOString()
             });
         }
+    }
+
+    // Track hashtag clicks
+    const hashtag = event.target.closest('.hashtag');
+    if (hashtag) {
+        const topic = hashtag.dataset.topic || hashtag.textContent;
+
+        Analytics.getInstance().track('Hashtag Click', {
+            topic: topic,
+            sessionId: sessionId,
+            timestamp: new Date().toISOString()
+        });
     }
 
     // Track navigation menu clicks

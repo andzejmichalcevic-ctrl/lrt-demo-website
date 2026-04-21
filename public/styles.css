@@ -16,11 +16,10 @@ body {
 
 .header {
     background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .header-top {
@@ -114,13 +113,142 @@ body {
 }
 
 .main-content {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 32px 24px;
+    padding: 0;
 }
 
-.hero-section {
-    margin-bottom: 48px;
+/* Top News Carousel */
+.top-news-carousel {
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0;
+}
+
+.carousel-items {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.carousel-items::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-item {
+    display: flex;
+    min-width: 280px;
+    padding: 12px 16px;
+    border-right: 1px solid #e0e0e0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.carousel-item:hover {
+    background-color: #f5f5f5;
+}
+
+.carousel-item img {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.carousel-content {
+    flex: 1;
+}
+
+.carousel-content p {
+    font-size: 13px;
+    line-height: 1.3;
+    color: #333;
+    margin: 0 0 4px 0;
+    font-weight: 400;
+}
+
+.time-meta {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* Hashtag Navigation */
+.hashtag-nav {
+    background: #f8f9fa;
+    padding: 12px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.hashtag-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.hashtag {
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 13px;
+    white-space: nowrap;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.hashtag:hover {
+    color: #004499;
+    text-decoration: underline;
+}
+
+/* Main Featured Articles */
+.main-featured {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin: 0;
+    background: #e0e0e0;
+}
+
+.featured-large {
+    position: relative;
+    cursor: pointer;
+    background: white;
+    transition: transform 0.2s;
+}
+
+.featured-large:hover {
+    transform: scale(1.02);
+}
+
+.featured-large img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.article-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+    color: white;
+    padding: 24px 20px;
+}
+
+.article-overlay h2 {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0;
 }
 
 .hero-article {
@@ -595,4 +723,203 @@ body {
 .search-btn:focus {
     outline: 2px solid #e30613;
     outline-offset: 2px;
+}
+
+/* Article Page Styles */
+.article-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 48px;
+    background: white;
+}
+
+.article-content {
+    background: white;
+}
+
+.article-header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 24px;
+}
+
+.article-category {
+    color: #e30613;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.article-page h1 {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #111827;
+    margin-bottom: 16px;
+}
+
+.article-meta {
+    display: flex;
+    gap: 20px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.article-image {
+    margin-bottom: 32px;
+}
+
+.article-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.image-caption {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.article-body {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #374151;
+}
+
+.article-body p {
+    margin-bottom: 24px;
+}
+
+.article-related {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.article-related h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: #111827;
+}
+
+.article-related ul {
+    list-style: none;
+}
+
+.article-related li {
+    margin-bottom: 12px;
+}
+
+.article-related a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.article-related a:hover {
+    text-decoration: underline;
+}
+
+.article-actions {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 12px;
+}
+
+.share-btn {
+    padding: 10px 16px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.share-btn:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.sidebar {
+    background: #f9fafb;
+    padding: 24px;
+    border-radius: 8px;
+    height: fit-content;
+}
+
+.related-articles h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #111827;
+}
+
+.related-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.related-item:hover {
+    transform: translateX(4px);
+}
+
+.related-item img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.related-item h4 {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Mobile styles for article page */
+@media (max-width: 768px) {
+    .article-page {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 24px 16px;
+    }
+
+    .article-page h1 {
+        font-size: 28px;
+    }
+
+    .article-image img {
+        height: 250px;
+    }
+
+    .article-body {
+        font-size: 16px;
+    }
+
+    .article-actions {
+        flex-wrap: wrap;
+    }
+
+    .sidebar {
+        order: -1;
+    }
 }
