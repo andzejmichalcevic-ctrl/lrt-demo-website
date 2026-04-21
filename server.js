@@ -1,6 +1,7 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { initDatabase, insertEvent, getEvents, getEventsSummary } from './database.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -8,8 +9,12 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Initialize database
+initDatabase();
+
 app.use(express.static('public'));
 app.use('/node_modules', express.static('node_modules'));
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'index.html'));
@@ -19,14 +24,80 @@ app.get('/article/:id', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'article.html'));
 });
 
-// Add analytics endpoint to capture data
-app.use(express.json());
+// Analytics collection endpoint
+app.post('/', async (req, res) => {
+  try {
+    const events = Array.isArray(req.body) ? req.body : [req.body];
 
-app.post('/', (req, res) => {
-  console.log('Analytics Event:', JSON.stringify(req.body, null, 2));
-  res.status(200).json({ success: true });
+    for (const event of events) {
+      const { type, properties = {} } = event;
+      const sessionId = properties.sessionId || req.headers['x-session-id'];
+      const userAgent = req.headers['user-agent'];
+      const pageUrl = req.headers.referer || properties.url;
+
+      // Store in database
+      await insertEvent(type, sessionId, userAgent, pageUrl, properties);
+
+      // Also log to console for debugging
+      console.log('Analytics Event:', {
+        type,
+        sessionId,
+        properties,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      eventsProcessed: events.length
+    });
+  } catch (error) {
+    console.error('Analytics endpoint error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Analytics dashboard endpoint
+app.get('/analytics', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'analytics-dashboard.html'));
+});
+
+// API endpoint to get analytics data
+app.get('/api/analytics', async (req, res) => {
+  try {
+    const { type, session, limit = 100, startDate, endDate } = req.query;
+
+    const filters = {
+      eventType: type,
+      sessionId: session,
+      limit: parseInt(limit),
+      startDate,
+      endDate
+    };
+
+    const events = await getEvents(filters);
+    res.json({ success: true, events });
+  } catch (error) {
+    console.error('Analytics API error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API endpoint to get analytics summary
+app.get('/api/analytics/summary', async (req, res) => {
+  try {
+    const summary = await getEventsSummary();
+    res.json({ success: true, ...summary });
+  } catch (error) {
+    console.error('Analytics summary error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Analytics dashboard: http://localhost:${PORT}/analytics`);
 });

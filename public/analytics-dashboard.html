@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - LRT Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .back-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .dashboard-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e30613;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .events-section {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            background: #e30613;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .refresh-btn:hover {
+            background: #c2051a;
+        }
+
+        .events-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .events-table th,
+        .events-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .events-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            font-size: 12px;
+            color: #374151;
+            text-transform: uppercase;
+        }
+
+        .events-table td {
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        .event-type {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .event-data {
+            max-width: 300px;
+            word-break: break-word;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 11px;
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 4px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .timestamp {
+            color: #666;
+            font-size: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e30613;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .filters {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .events-table {
+                font-size: 12px;
+            }
+
+            .events-table th,
+            .events-table td {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <h1 class="dashboard-title">📊 LRT Analytics Dashboard</h1>
+        <a href="/" class="back-link">← Back to Website</a>
+    </header>
+
+    <main class="dashboard-content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-events">-</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="unique-sessions">-</div>
+                <div class="stat-label">Unique Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="page-views">-</div>
+                <div class="stat-label">Page Views</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="article-clicks">-</div>
+                <div class="stat-label">Article Clicks</div>
+            </div>
+        </div>
+
+        <div class="events-section">
+            <div class="section-header">
+                <h2 class="section-title">Live Events Stream</h2>
+                <div class="filters">
+                    <select class="filter-select" id="event-type-filter">
+                        <option value="">All Events</option>
+                        <option value="Page View">Page Views</option>
+                        <option value="Article Click">Article Clicks</option>
+                        <option value="Navigation Click">Navigation Clicks</option>
+                        <option value="Hashtag Click">Hashtag Clicks</option>
+                        <option value="Session Start">Session Starts</option>
+                    </select>
+                    <select class="filter-select" id="limit-filter">
+                        <option value="50">Last 50</option>
+                        <option value="100" selected>Last 100</option>
+                        <option value="200">Last 200</option>
+                        <option value="500">Last 500</option>
+                    </select>
+                    <button class="refresh-btn" onclick="loadEvents()">Refresh</button>
+                </div>
+            </div>
+
+            <div id="events-content">
+                <div class="loading">Loading events...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let eventData = [];
+        let refreshInterval;
+
+        async function loadSummary() {
+            try {
+                const response = await fetch('/api/analytics/summary');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-events').textContent =
+                        data.sessionStats?.total_events || '0';
+                    document.getElementById('unique-sessions').textContent =
+                        data.sessionStats?.unique_sessions || '0';
+
+                    // Count specific event types
+                    const pageViews = data.eventTypeTotals?.find(e => e.event_type === 'Page View')?.total_count || '0';
+                    const articleClicks = data.eventTypeTotals?.find(e => e.event_type === 'Article Click')?.total_count || '0';
+
+                    document.getElementById('page-views').textContent = pageViews;
+                    document.getElementById('article-clicks').textContent = articleClicks;
+                }
+            } catch (error) {
+                console.error('Error loading summary:', error);
+            }
+        }
+
+        async function loadEvents() {
+            try {
+                const eventType = document.getElementById('event-type-filter').value;
+                const limit = document.getElementById('limit-filter').value;
+
+                const params = new URLSearchParams();
+                if (eventType) params.append('type', eventType);
+                params.append('limit', limit);
+
+                const response = await fetch(`/api/analytics?${params}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    eventData = data.events;
+                    renderEvents();
+                } else {
+                    document.getElementById('events-content').innerHTML =
+                        `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                document.getElementById('events-content').innerHTML =
+                    '<div class="error">Failed to load events</div>';
+            }
+        }
+
+        function renderEvents() {
+            const content = document.getElementById('events-content');
+
+            if (eventData.length === 0) {
+                content.innerHTML = '<div class="loading">No events found</div>';
+                return;
+            }
+
+            const table = `
+                <table class="events-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Event Type</th>
+                            <th>Session</th>
+                            <th>Page URL</th>
+                            <th>Event Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${eventData.map(event => `
+                            <tr>
+                                <td class="timestamp">${formatTimestamp(event.created_at)}</td>
+                                <td><span class="event-type">${event.event_type}</span></td>
+                                <td>${event.session_id ? event.session_id.substring(0, 8) + '...' : 'N/A'}</td>
+                                <td>${event.page_url || 'N/A'}</td>
+                                <td><div class="event-data">${JSON.stringify(event.event_data, null, 2)}</div></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            content.innerHTML = table;
+        }
+
+        function formatTimestamp(timestamp) {
+            return new Date(timestamp).toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Event listeners
+        document.getElementById('event-type-filter').addEventListener('change', loadEvents);
+        document.getElementById('limit-filter').addEventListener('change', loadEvents);
+
+        // Auto-refresh every 10 seconds
+        function startAutoRefresh() {
+            refreshInterval = setInterval(() => {
+                loadSummary();
+                loadEvents();
+            }, 10000);
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadSummary();
+            loadEvents();
+            startAutoRefresh();
+        });
+
+        // Stop auto-refresh when page is hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+            }
+        });
+    </script>
+</body>
+</html>
