@@ -25,7 +25,7 @@ app.get('/article/:id', (req, res) => {
 });
 
 // Analytics collection endpoint
-app.post('/', async (req, res) => {
+app.post('/analytics', async (req, res) => {
   try {
     const events = Array.isArray(req.body) ? req.body : [req.body];
 
@@ -94,6 +94,27 @@ app.get('/api/analytics/summary', async (req, res) => {
   } catch (error) {
     console.error('Analytics summary error:', error);
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Test endpoint to verify database connection
+app.get('/api/test', async (req, res) => {
+  try {
+    const { pool } = await import('./database.js');
+    const result = await pool.query('SELECT NOW() as current_time, COUNT(*) as event_count FROM analytics_events');
+    res.json({
+      success: true,
+      database_time: result.rows[0].current_time,
+      total_events: result.rows[0].event_count,
+      message: 'Database connection working!'
+    });
+  } catch (error) {
+    console.error('Database test error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Database connection failed'
+    });
   }
 });
 
