@@ -3,120 +3,484 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lietuvos nacionalinis radijas ir televizija - LRT Demo</title>
+    <title>LRT.lt – Lietuvos nacionalinis radijas ir televizija</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="header">
-        <div class="header-top">
-            <button class="menu-btn">☰ Meniu</button>
-            <div class="logo">
+
+<header class="header">
+    <div class="header-top">
+        <button class="menu-btn">☰ Meniu</button>
+        <a href="/" class="logo"><span class="logo-text">LRT</span><span class="logo-dot">.lt</span></a>
+        <button class="search-btn" id="searchBtn">🔍 Paieška</button>
+    </div>
+    <nav class="nav-menu">
+        <a href="/" class="nav-item active">Naujienos</a>
+        <a href="/category/aktualijos" class="nav-item">Aktualijos</a>
+        <a href="/category/politika" class="nav-item">Politika</a>
+        <a href="/category/ekonomika" class="nav-item">Ekonomika</a>
+        <a href="/category/kultura" class="nav-item">Kultūra</a>
+        <a href="/category/sportas" class="nav-item">Sportas</a>
+        <a href="/category/sveikata" class="nav-item">Sveikata</a>
+        <a href="/category/technologijos" class="nav-item">Technologijos</a>
+        <a href="/category/aplinka" class="nav-item">Aplinka</a>
+        <a href="/category/pasaulis" class="nav-item">Pasaulis</a>
+        <a href="/category/mediateka" class="nav-item">Mediateka</a>
+        <a href="/category/radioteka" class="nav-item">Radioteka</a>
+    </nav>
+</header>
+
+<!-- Search overlay -->
+<div class="search-overlay" id="searchOverlay">
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Ieškoti naujienų..." id="searchInput">
+        <button class="search-close" id="searchClose">✕</button>
+    </div>
+</div>
+
+<main>
+
+    <!-- Breaking news ticker -->
+    <div class="breaking-bar">
+        <span class="breaking-label">NAUJAUSIOS</span>
+        <div class="breaking-ticker">
+            <span>Seimas pritarė gynybos biudžeto didinimui iki 5% BVP &nbsp;•&nbsp; Vilniuje pradedamas statybų sezonas: numatyti 12 didelių projektų &nbsp;•&nbsp; Lietuvos krepšinio rinktinė laimėjo draugiškąsias rungtynes prieš Latviją &nbsp;•&nbsp; Europos Komisija patvirtino naują klimato apsaugos paketą &nbsp;•&nbsp; Kauno oro uoste atidaromas naujas tarptautinių skrydžių terminalas</span>
+        </div>
+    </div>
+
+    <!-- Top news carousel -->
+    <section class="top-news-carousel">
+        <div class="carousel-items">
+            <a href="/article/1" class="carousel-item" data-article-id="1">
+                <img src="https://picsum.photos/seed/lrt1/120/70" alt="Naujiena 1">
+                <div class="carousel-content">
+                    <p>Prezidentas susitiko su ES atstovais: svarbūs pokalbiai dėl Lietuvos gynybos</p>
+                    <span class="time-meta">Prieš 4 MIN.</span>
+                </div>
+            </a>
+            <a href="/article/2" class="carousel-item" data-article-id="2">
+                <img src="https://picsum.photos/seed/lrt2/120/70" alt="Naujiena 2">
+                <div class="carousel-content">
+                    <p>Seimas svarsto naują mokesčių reformą: kas pasikeis paprastiems gyventojams</p>
+                    <span class="time-meta">Prieš 9 MIN.</span>
+                </div>
+            </a>
+            <a href="/article/3" class="carousel-item" data-article-id="3">
+                <img src="https://picsum.photos/seed/lrt3/120/70" alt="Naujiena 3">
+                <div class="carousel-content">
+                    <p>Vilniuje atidaromas naujas inovacijų centras: tikimasi pritraukti investicijų</p>
+                    <span class="time-meta">Prieš 15 MIN.</span>
+                </div>
+            </a>
+            <a href="/article/4" class="carousel-item" data-article-id="4">
+                <img src="https://picsum.photos/seed/lrt4/120/70" alt="Naujiena 4">
+                <div class="carousel-content">
+                    <p>Lietuvos krepšininkai ruošiasi svarbiam Europos čempionato turui</p>
+                    <span class="time-meta">Prieš 22 MIN.</span>
+                </div>
+            </a>
+            <a href="/article/5" class="carousel-item" data-article-id="5">
+                <img src="https://picsum.photos/seed/lrt5/120/70" alt="Naujiena 5">
+                <div class="carousel-content">
+                    <p>Lietuvos BVP augimas viršijo prognozes: ekspertai tikisi teigiamų pokyčių</p>
+                    <span class="time-meta">Prieš 31 MIN.</span>
+                </div>
+            </a>
+            <a href="/article/7" class="carousel-item" data-article-id="7">
+                <img src="https://picsum.photos/seed/lrt7/120/70" alt="Naujiena 7">
+                <div class="carousel-content">
+                    <p>Medikai perspėja dėl gripo sezono: rekomenduoja skiepytis</p>
+                    <span class="time-meta">Prieš 45 MIN.</span>
+                </div>
+            </a>
+            <a href="/article/10" class="carousel-item" data-article-id="10">
+                <img src="https://picsum.photos/seed/lrt10/120/70" alt="Naujiena 10">
+                <div class="carousel-content">
+                    <p>Vyriausybė pristatė naują aplinkosaugos strategiją iki 2035 metų</p>
+                    <span class="time-meta">Prieš 1 VAL.</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Hashtag topics -->
+    <section class="hashtag-nav">
+        <a href="#" class="hashtag" data-topic="rusijos-karas"># Rusijos karas prieš Ukrainą</a>
+        <a href="#" class="hashtag" data-topic="gynyba"># Lietuvos gynyba</a>
+        <a href="#" class="hashtag" data-topic="ekonomika"># Ekonomikos augimas</a>
+        <a href="#" class="hashtag" data-topic="klimatas"># Klimato kaita</a>
+        <a href="#" class="hashtag" data-topic="eurovizija"># Eurovizija 2026</a>
+        <a href="#" class="hashtag" data-topic="pensijos"># Pensijų reforma</a>
+        <a href="#" class="hashtag" data-topic="sveikatos-apsauga"># Sveikatos apsauga</a>
+        <a href="#" class="hashtag" data-topic="dirbtinis-intelektas"># Dirbtinis intelektas</a>
+    </section>
+
+    <div class="content-wrapper">
+
+        <!-- Main hero section -->
+        <section class="hero-section">
+            <a href="/article/1" class="hero-article" data-article-id="1">
+                <img src="https://picsum.photos/seed/hero1/900/520" alt="Pagrindinis straipsnis">
+                <div class="hero-content">
+                    <span class="hero-category">Politika</span>
+                    <h1>Prezidentas susitiko su ES atstovais: svarbūs pokalbiai dėl Lietuvos ateities ir saugumo garantijų</h1>
+                    <p class="hero-lead">Valstybės vadovas pabrėžė, kad Lietuva yra pasirengusi didinti gynybos išlaidas ir aktyviau dalyvauti NATO misijose.</p>
+                    <span class="hero-meta">Jonas Jonaitis · Prieš 4 min.</span>
+                </div>
+            </a>
+        </section>
+
+        <!-- Featured 3-column grid -->
+        <section class="featured-section">
+            <div class="featured-grid">
+                <a href="/article/2" class="featured-card" data-article-id="2">
+                    <div class="featured-img-wrap">
+                        <img src="https://picsum.photos/seed/feat2/500/300" alt="Straipsnis 2">
+                    </div>
+                    <div class="featured-body">
+                        <span class="category">Ekonomika</span>
+                        <h3>Seimas svarsto naują mokesčių reformą: kas pasikeis paprastiems gyventojams</h3>
+                        <span class="article-meta">Prieš 9 min.</span>
+                    </div>
+                </a>
+                <a href="/article/3" class="featured-card" data-article-id="3">
+                    <div class="featured-img-wrap">
+                        <img src="https://picsum.photos/seed/feat3/500/300" alt="Straipsnis 3">
+                    </div>
+                    <div class="featured-body">
+                        <span class="category">Verslas</span>
+                        <h3>Vilniuje atidaromas naujas inovacijų centras: tikimasi pritraukti užsienio investicijų</h3>
+                        <span class="article-meta">Prieš 15 min.</span>
+                    </div>
+                </a>
+                <a href="/article/8" class="featured-card" data-article-id="8">
+                    <div class="featured-img-wrap">
+                        <img src="https://picsum.photos/seed/feat8/500/300" alt="Straipsnis 8">
+                    </div>
+                    <div class="featured-body">
+                        <span class="category">Technologijos</span>
+                        <h3>Lietuvos startuolis pritraukė milijoninę investiciją: planuoja plėtrą į Vakarų Europą</h3>
+                        <span class="article-meta">Prieš 38 min.</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Main content + sidebar -->
+        <div class="main-with-sidebar">
+
+            <div class="main-column">
+
+                <!-- Aktualijos section -->
+                <section class="news-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Aktualijos</h2>
+                        <a href="/category/aktualijos" class="section-more">Visos naujienos →</a>
+                    </div>
+                    <div class="news-list">
+                        <a href="/article/5" class="news-row" data-article-id="5">
+                            <img src="https://picsum.photos/seed/news5/200/130" alt="Straipsnis 5">
+                            <div class="news-row-body">
+                                <span class="category">Ekonomika</span>
+                                <h3>Lietuvos BVP augimas viršijo prognozes ketvirtį: ekspertai tikisi teigiamų metinių pokyčių</h3>
+                                <p>Statistikos departamento duomenimis, šalies ekonomika augo 3,2 proc. – daugiau nei buvo prognozuota.</p>
+                                <span class="article-meta">Prieš 31 min. · Marta Stankevičiūtė</span>
+                            </div>
+                        </a>
+                        <a href="/article/10" class="news-row" data-article-id="10">
+                            <img src="https://picsum.photos/seed/news10/200/130" alt="Straipsnis 10">
+                            <div class="news-row-body">
+                                <span class="category">Aplinka</span>
+                                <h3>Vyriausybė pristatė naują aplinkosaugos strategiją: siekis – nulinė tarša iki 2035 metų</h3>
+                                <p>Strategijoje numatytos konkrečios priemonės, kaip mažinti pramonės ir transporto keliamą taršą.</p>
+                                <span class="article-meta">Prieš 1 val. · Rimas Paulauskas</span>
+                            </div>
+                        </a>
+                        <a href="/article/6" class="news-row" data-article-id="6">
+                            <img src="https://picsum.photos/seed/news6/200/130" alt="Straipsnis 6">
+                            <div class="news-row-body">
+                                <span class="category">Kultūra</span>
+                                <h3>Nacionaliniame muziejuje atidaroma unikali paroda apie Lietuvos istorijos lūžio taškus</h3>
+                                <p>Ekspozicijoje – daugiau nei 500 eksponatų iš Lietuvos ir užsienio archyvų.</p>
+                                <span class="article-meta">Prieš 2 val. · Jurgita Balčiūnaitė</span>
+                            </div>
+                        </a>
+                        <a href="/article/7" class="news-row" data-article-id="7">
+                            <img src="https://picsum.photos/seed/news7/200/130" alt="Straipsnis 7">
+                            <div class="news-row-body">
+                                <span class="category">Sveikata</span>
+                                <h3>Medikai perspėja dėl gripo sezono: ragina skiepytis laiku ir nevilkinti</h3>
+                                <p>Sveikatos apsaugos ministerija praneša, kad skiepai nuo gripo jau prieinami visose pirminės priežiūros įstaigose.</p>
+                                <span class="article-meta">Prieš 45 min. · dr. Algis Norvaišas</span>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Sportas section -->
+                <section class="news-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Sportas</h2>
+                        <a href="/category/sportas" class="section-more">Daugiau sporto →</a>
+                    </div>
+                    <div class="sports-grid">
+                        <a href="/article/4" class="sport-card" data-article-id="4">
+                            <div class="sport-img-wrap">
+                                <img src="https://picsum.photos/seed/sport4/400/240" alt="Straipsnis 4">
+                                <span class="live-badge">TIESIOGIAI</span>
+                            </div>
+                            <div class="sport-body">
+                                <span class="category">Krepšinis</span>
+                                <h3>Lietuvos krepšininkai ruošiasi svarbiam Europos čempionato turui: treneris optimistiškai nusiteikęs</h3>
+                                <span class="article-meta">Prieš 22 min.</span>
+                            </div>
+                        </a>
+                        <a href="/article/9" class="sport-card" data-article-id="9">
+                            <div class="sport-img-wrap">
+                                <img src="https://picsum.photos/seed/sport9/400/240" alt="Straipsnis 9">
+                            </div>
+                            <div class="sport-body">
+                                <span class="category">Lengvoji atletika</span>
+                                <h3>Lietuvos lengvaatlečiai pasiekė puikių rezultatų tarptautinėse varžybose Berlyne</h3>
+                                <span class="article-meta">Prieš 3 val.</span>
+                            </div>
+                        </a>
+                        <a href="/article/11" class="sport-card" data-article-id="11">
+                            <div class="sport-img-wrap">
+                                <img src="https://picsum.photos/seed/sport11/400/240" alt="Straipsnis 11">
+                            </div>
+                            <div class="sport-body">
+                                <span class="category">Futbolas</span>
+                                <h3>Lietuvos futbolo rinktinė pradeda pasiruošimą Europos atrankos rungtynėms</h3>
+                                <span class="article-meta">Prieš 5 val.</span>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Video section -->
+                <section class="news-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Vaizdo įrašai</h2>
+                        <a href="/category/mediateka" class="section-more">Visa mediateka →</a>
+                    </div>
+                    <div class="video-grid">
+                        <a href="/article/12" class="video-card" data-article-id="v12" data-video-title="LRT žinios" data-video-duration="24:30">
+                            <div class="video-thumb">
+                                <img src="https://picsum.photos/seed/vid12/480/270" alt="Video 1">
+                                <span class="play-btn">▶</span>
+                                <span class="video-duration">24:30</span>
+                            </div>
+                            <div class="video-body">
+                                <span class="category">Žinios</span>
+                                <h3>LRT žinios: svarbiausios dienos aktualijos</h3>
+                                <span class="article-meta">Šiandien 19:00</span>
+                            </div>
+                        </a>
+                        <a href="/article/13" class="video-card" data-article-id="v13" data-video-title="Panorama" data-video-duration="48:12">
+                            <div class="video-thumb">
+                                <img src="https://picsum.photos/seed/vid13/480/270" alt="Video 2">
+                                <span class="play-btn">▶</span>
+                                <span class="video-duration">48:12</span>
+                            </div>
+                            <div class="video-body">
+                                <span class="category">Laida</span>
+                                <h3>Panorama: savaitės politikos apžvalga su ekspertų komentarais</h3>
+                                <span class="article-meta">Vakar 20:15</span>
+                            </div>
+                        </a>
+                        <a href="/article/14" class="video-card" data-article-id="v14" data-video-title="Labas rytas Lietuva" data-video-duration="1:12:05">
+                            <div class="video-thumb">
+                                <img src="https://picsum.photos/seed/vid14/480/270" alt="Video 3">
+                                <span class="play-btn">▶</span>
+                                <span class="video-duration">1:12:05</span>
+                            </div>
+                            <div class="video-body">
+                                <span class="category">Ryto laida</span>
+                                <h3>Labas rytas, Lietuva: interviu su gynybos ministru</h3>
+                                <span class="article-meta">Šiandien 07:00</span>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+
+            </div><!-- /.main-column -->
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+
+                <!-- Most read -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Daugiausia skaityta</h3>
+                    <ol class="top-list">
+                        <li><a href="/article/1" data-article-id="1">Prezidentas susitiko su ES atstovais: svarbūs pokalbiai dėl saugumo garantijų</a></li>
+                        <li><a href="/article/5" data-article-id="5">Lietuvos BVP augimas viršijo prognozes: ko tikėtis iki metų pabaigos</a></li>
+                        <li><a href="/article/8" data-article-id="8">Lietuvos startuolis pritraukė milijoninę investiciją iš Vokietijos fondo</a></li>
+                        <li><a href="/article/4" data-article-id="4">Krepšinio rinktinė: treneris atskleidė pagrindinio penketuko sudėtį</a></li>
+                        <li><a href="/article/7" data-article-id="7">Medikai perspėja: šį sezoną gripas gali būti ypač agresyvus</a></li>
+                        <li><a href="/article/2" data-article-id="2">Mokesčių reforma: kaip pasikeis gyventojų pajamų mokestis nuo kitų metų</a></li>
+                    </ol>
+                </div>
+
+                <!-- Radio -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Radijas dabar</h3>
+                    <div class="radio-list">
+                        <div class="radio-card">
+                            <div class="radio-header lrt-radio">LRT RADIJAS</div>
+                            <div class="radio-body">
+                                <p class="radio-time">13:00 – 15:00</p>
+                                <p class="radio-show">Aktualijų studija – dienos apžvalga</p>
+                                <button class="listen-btn" data-radio-station="LRT Radijas" data-radio-show="Aktualijų studija">▶ Klausytis</button>
+                            </div>
+                        </div>
+                        <div class="radio-card">
+                            <div class="radio-header lrt-klasika">LRT KLASIKA</div>
+                            <div class="radio-body">
+                                <p class="radio-time">13:05 – 14:00</p>
+                                <p class="radio-show">Klasikinė muzika: Bethovenas ir Mocartas</p>
+                                <button class="listen-btn" data-radio-station="LRT Klasika" data-radio-show="Klasikinė muzika">▶ Klausytis</button>
+                            </div>
+                        </div>
+                        <div class="radio-card">
+                            <div class="radio-header lrt-opus">LRT OPUS</div>
+                            <div class="radio-body">
+                                <p class="radio-time">13:00 – 14:30</p>
+                                <p class="radio-show">Kultūros laidų maraton</p>
+                                <button class="listen-btn" data-radio-station="LRT Opus" data-radio-show="Kultūros laidos">▶ Klausytis</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather widget -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Orai</h3>
+                    <div class="weather-widget">
+                        <div class="weather-city">
+                            <span class="weather-icon">⛅</span>
+                            <div>
+                                <strong>Vilnius</strong>
+                                <span class="weather-temp">+14°C</span>
+                            </div>
+                        </div>
+                        <div class="weather-city">
+                            <span class="weather-icon">🌧</span>
+                            <div>
+                                <strong>Kaunas</strong>
+                                <span class="weather-temp">+12°C</span>
+                            </div>
+                        </div>
+                        <div class="weather-city">
+                            <span class="weather-icon">☁️</span>
+                            <div>
+                                <strong>Klaipėda</strong>
+                                <span class="weather-temp">+10°C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+
+        </div><!-- /.main-with-sidebar -->
+
+        <!-- Kultūra section - full width -->
+        <section class="news-section full-width-section">
+            <div class="section-header">
+                <h2 class="section-title">Kultūra</h2>
+                <a href="/category/kultura" class="section-more">Daugiau kultūros →</a>
+            </div>
+            <div class="culture-grid">
+                <a href="/article/6" class="culture-card culture-main" data-article-id="6">
+                    <img src="https://picsum.photos/seed/cult6/700/420" alt="Kultūra 6">
+                    <div class="culture-overlay">
+                        <span class="category">Kultūra</span>
+                        <h3>Nacionaliniame muziejuje atidaroma unikali paroda apie Lietuvos istorijos lūžio taškus</h3>
+                        <span class="article-meta">Prieš 2 val.</span>
+                    </div>
+                </a>
+                <div class="culture-side">
+                    <a href="/article/15" class="culture-small" data-article-id="15">
+                        <img src="https://picsum.photos/seed/cult15/300/180" alt="Kultūra 15">
+                        <div class="culture-small-body">
+                            <span class="category">Teatras</span>
+                            <h4>Nacionalinis dramos teatras pristato naują spektaklį pagal Donelaitį</h4>
+                            <span class="article-meta">Prieš 3 val.</span>
+                        </div>
+                    </a>
+                    <a href="/article/16" class="culture-small" data-article-id="16">
+                        <img src="https://picsum.photos/seed/cult16/300/180" alt="Kultūra 16">
+                        <div class="culture-small-body">
+                            <span class="category">Muzika</span>
+                            <h4>Eurovizijos atstovė Lietuva pristatė oficialų vaizdo klipą Europai</h4>
+                            <span class="article-meta">Prieš 5 val.</span>
+                        </div>
+                    </a>
+                    <a href="/article/17" class="culture-small" data-article-id="17">
+                        <img src="https://picsum.photos/seed/cult17/300/180" alt="Kultūra 17">
+                        <div class="culture-small-body">
+                            <span class="category">Literatūra</span>
+                            <h4>Paskelbtas metų knygos rinkinio nugalėtojas: tai debiutinis romanas</h4>
+                            <span class="article-meta">Prieš 6 val.</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- /.content-wrapper -->
+
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="logo" style="font-size:28px; margin-bottom:12px;">
                 <span class="logo-text">LRT</span><span class="logo-dot">.lt</span>
             </div>
-            <button class="search-btn">🔍 Paieška</button>
+            <p>Lietuvos nacionalinis radijas ir televizija</p>
+            <p>© 2026 LRT. Demo versija su Exacaster Analytics</p>
         </div>
-        <nav class="nav-menu">
-            <a href="#" class="nav-item active">Tiesiogiai</a>
-            <a href="#" class="nav-item">Aktualijos</a>
-            <a href="#" class="nav-item">Mediateka</a>
-            <a href="#" class="nav-item">Radioteka</a>
-            <a href="#" class="nav-item">Epika</a>
-            <a href="#" class="nav-item">Kultūra</a>
-            <a href="#" class="nav-item">Sportas</a>
-            <a href="#" class="nav-item">Vaikams</a>
-            <a href="#" class="nav-item">Laisvalaikis</a>
-            <a href="#" class="nav-item">Žaidimės</a>
-            <a href="#" class="nav-item">Archyvai</a>
-            <a href="#" class="nav-item">Paprastai</a>
-            <a href="#" class="nav-item">Eurovision Sport</a>
-        </nav>
-    </header>
-
-    <main class="main-content">
-        <!-- Top News Carousel -->
-        <section class="top-news-carousel">
-            <div class="carousel-items">
-                <article class="carousel-item" data-article-id="1">
-                    <img src="https://via.placeholder.com/100x60/0066CC/FFFFFF?text=LRT" alt="News 1">
-                    <div class="carousel-content">
-                        <p>Lobovui už Jonavos mero Sinkevičiaus šmeižimą skirta laisvės atėmimo bausmė atsitaip plakatos „Snipejimas nelygu..."</p>
-                        <span class="time-meta">Prieš 9 MIN.</span>
-                    </div>
-                </article>
-                <article class="carousel-item" data-article-id="2">
-                    <div class="carousel-content">
-                        <p>Profsąjunga krepšės į savivaldybę dėl pažeidimų „Kauno..."</p>
-                        <span class="time-meta">Prieš 10 MIN.</span>
-                    </div>
-                </article>
-                <article class="carousel-item" data-article-id="3">
-                    <img src="https://via.placeholder.com/100x60/006633/FFFFFF?text=News" alt="News 3">
-                    <div class="carousel-content">
-                        <p>Pradėdamas plietinio ugdymo projektas, skirtas Visagino ir Vilniaus rajo...</p>
-                        <span class="time-meta">Prieš 18 MIN.</span>
-                    </div>
-                </article>
-                <article class="carousel-item" data-article-id="4">
-                    <img src="https://via.placeholder.com/100x60/990000/FFFFFF?text=News" alt="News 4">
-                    <div class="carousel-content">
-                        <p>Lobovui už Jonavos mero Sinkevičiaus šmeižimą skirta laisvės atėmimo...</p>
-                        <span class="time-meta">Prieš 23 MIN.</span>
-                    </div>
-                </article>
-                <article class="carousel-item" data-article-id="5">
-                    <img src="https://via.placeholder.com/100x60/CC6600/FFFFFF?text=News" alt="News 5">
-                    <div class="carousel-content">
-                        <p>Nuo religijos, filosofijos iki šoklių: vū kviečia į Azijos festivalj „ATSibusk"</p>
-                        <span class="time-meta">Prieš 31 MIN.</span>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- Hashtag Navigation -->
-        <section class="hashtag-nav">
-            <a href="#" class="hashtag" data-topic="rusijos-karas"># Rusijos karas prieš Ukrainą</a>
-            <a href="#" class="hashtag" data-topic="jav-izraelis"># JAV ir Izraelio karas prieš Iraną</a>
-            <a href="#" class="hashtag" data-topic="saulius-skvernelis"># Saulius Skvernelis</a>
-            <a href="#" class="hashtag" data-topic="mano-pensija"># Mano pensija</a>
-            <a href="#" class="hashtag" data-topic="salin-rankas"># Šalin rankas</a>
-            <a href="#" class="hashtag" data-topic="eurovizija"># Eurovizija 2026</a>
-            <a href="#" class="hashtag" data-topic="metu-knygos"># Metų knygos rinkiniai</a>
-        </section>
-
-        <!-- Main Featured Articles -->
-        <section class="main-featured">
-            <article class="featured-large" data-article-id="6">
-                <img src="https://via.placeholder.com/600x400/8B4513/FFFFFF?text=Main+Article" alt="Main featured article">
-                <div class="article-overlay">
-                    <h2>Lobovui už Jonavos mero Sinkevičiaus šmeižimą skirta laisvės atėmimo bausmė</h2>
-                </div>
-            </article>
-            <article class="featured-large" data-article-id="7">
-                <img src="https://via.placeholder.com/600x400/4682B4/FFFFFF?text=Second+Article" alt="Second featured article">
-                <div class="article-overlay">
-                    <h2>Rusijos transporto infrastruktūros pažeidimai dėl Ukrainos karo</h2>
-                </div>
-            </article>
-        </section>
-
-    </main>
-
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>LRT.lt</h3>
-                <p>Lietuvos nacionalinis radijas ir televizija</p>
-                <p>© 2024 LRT. Demo versija su Exacaster Analytics</p>
-            </div>
-            <div class="footer-section">
-                <h3>Kontaktai</h3>
-                <p>El. paštas: info@lrt.lt</p>
-                <p>Tel.: +370 5 236 3000</p>
-            </div>
+        <div class="footer-links">
+            <h4>Naujienos</h4>
+            <a href="/category/aktualijos">Aktualijos</a>
+            <a href="/category/politika">Politika</a>
+            <a href="/category/ekonomika">Ekonomika</a>
+            <a href="/category/sportas">Sportas</a>
+            <a href="/category/kultura">Kultūra</a>
         </div>
-    </footer>
+        <div class="footer-links">
+            <h4>Medija</h4>
+            <a href="/category/mediateka">Mediateka</a>
+            <a href="/category/radioteka">Radioteka</a>
+            <a href="/category/tiesiogiai">Tiesiogiai</a>
+        </div>
+        <div class="footer-links">
+            <h4>LRT</h4>
+            <a href="#">Apie mus</a>
+            <a href="#">Kontaktai</a>
+            <a href="#">Reklama</a>
+            <a href="#">Privatumo politika</a>
+        </div>
+    </div>
+</footer>
 
-    <script type="module" src="analytics.js"></script>
+<script type="module" src="analytics.js"></script>
+<script>
+    // Search overlay
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        document.getElementById('searchOverlay').classList.add('active');
+        document.getElementById('searchInput').focus();
+    });
+    document.getElementById('searchClose').addEventListener('click', () => {
+        document.getElementById('searchOverlay').classList.remove('active');
+    });
+    document.getElementById('searchOverlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) e.currentTarget.classList.remove('active');
+    });
+</script>
 </body>
 </html>

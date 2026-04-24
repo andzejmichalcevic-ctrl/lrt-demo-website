@@ -24,6 +24,10 @@ app.get('/article/:id', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'article.html'));
 });
 
+app.get('/category/:slug', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'index.html'));
+});
+
 // Analytics collection endpoint
 app.post('/analytics', async (req, res) => {
   try {

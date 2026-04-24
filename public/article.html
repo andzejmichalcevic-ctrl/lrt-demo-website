@@ -3,232 +3,536 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Straipsnis - LRT Demo</title>
+    <title>Straipsnis – LRT.lt</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .article-page {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        .article-header {
-            margin-bottom: 30px;
-        }
-        .article-title {
-            font-size: 42px;
-            line-height: 1.2;
-            margin-bottom: 20px;
-        }
-        .article-info {
-            display: flex;
-            gap: 20px;
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        .article-image {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .article-body {
-            font-size: 18px;
-            line-height: 1.8;
-            color: #333;
-        }
-        .article-body p {
-            margin-bottom: 20px;
-        }
-        .back-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background: #333;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .back-btn:hover {
-            background: #555;
-        }
-        .share-buttons {
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid #e0e0e0;
-        }
-        .share-btn {
-            display: inline-block;
-            padding: 8px 16px;
-            margin-right: 10px;
-            background: #e0e0e0;
-            color: #333;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .share-btn:hover {
-            background: #d0d0d0;
-        }
-        .related-articles {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid #e0e0e0;
-        }
-        .related-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .related-item {
-            cursor: pointer;
-        }
-        .related-item img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        .related-item h4 {
-            margin-top: 10px;
-            font-size: 16px;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="header">
-        <div class="header-top">
-            <button class="menu-btn">☰ Meniu</button>
-            <div class="logo">
+
+<header class="header">
+    <div class="header-top">
+        <button class="menu-btn">☰ Meniu</button>
+        <a href="/" class="logo"><span class="logo-text">LRT</span><span class="logo-dot">.lt</span></a>
+        <button class="search-btn">🔍 Paieška</button>
+    </div>
+    <nav class="nav-menu">
+        <a href="/" class="nav-item">Naujienos</a>
+        <a href="/category/aktualijos" class="nav-item">Aktualijos</a>
+        <a href="/category/politika" class="nav-item">Politika</a>
+        <a href="/category/ekonomika" class="nav-item">Ekonomika</a>
+        <a href="/category/kultura" class="nav-item">Kultūra</a>
+        <a href="/category/sportas" class="nav-item">Sportas</a>
+        <a href="/category/sveikata" class="nav-item">Sveikata</a>
+        <a href="/category/technologijos" class="nav-item">Technologijos</a>
+        <a href="/category/aplinka" class="nav-item">Aplinka</a>
+        <a href="/category/pasaulis" class="nav-item">Pasaulis</a>
+    </nav>
+</header>
+
+<div class="content-wrapper">
+    <div class="article-layout">
+
+        <!-- Main article content -->
+        <main class="article-main" id="article-main">
+
+            <nav class="breadcrumb" id="breadcrumb">
+                <a href="/">Pradžia</a>
+                <span>›</span>
+                <a href="#" id="breadcrumb-category">Aktualijos</a>
+                <span>›</span>
+                <span id="breadcrumb-title">Straipsnis</span>
+            </nav>
+
+            <article>
+                <div class="article-top">
+                    <span class="category" id="article-category">Kategorija</span>
+                    <h1 id="article-title">Kraunama...</h1>
+                    <p class="article-lead" id="article-lead"></p>
+                    <div class="article-byline">
+                        <span id="article-author"></span>
+                        <span class="sep">·</span>
+                        <span id="article-date"></span>
+                        <span class="sep">·</span>
+                        <span id="article-readtime"></span>
+                    </div>
+                </div>
+
+                <div class="article-hero-img">
+                    <img id="article-image" src="" alt="Straipsnio nuotrauka">
+                    <p class="image-caption" id="article-caption"></p>
+                </div>
+
+                <div class="article-body" id="article-body"></div>
+
+                <div class="article-tags" id="article-tags"></div>
+
+                <div class="article-share">
+                    <span>Dalintis:</span>
+                    <a href="#" class="share-btn" data-share="facebook">Facebook</a>
+                    <a href="#" class="share-btn" data-share="twitter">Twitter / X</a>
+                    <a href="#" class="share-btn" data-share="linkedin">LinkedIn</a>
+                    <button class="share-btn" id="copyLinkBtn" data-share="copy">🔗 Nukopijuoti nuorodą</button>
+                </div>
+            </article>
+
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="article-sidebar">
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Susiję straipsniai</h3>
+                <div id="related-articles"></div>
+            </div>
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Daugiausia skaityta</h3>
+                <ol class="top-list">
+                    <li><a href="/article/1" data-article-id="1">Prezidentas susitiko su ES atstovais</a></li>
+                    <li><a href="/article/5" data-article-id="5">BVP augimas viršijo prognozes</a></li>
+                    <li><a href="/article/8" data-article-id="8">Startuolis pritraukė milijoninę investiciją</a></li>
+                    <li><a href="/article/4" data-article-id="4">Krepšinio rinktinė: trenerio planai</a></li>
+                    <li><a href="/article/7" data-article-id="7">Medikai perspėja dėl gripo sezono</a></li>
+                </ol>
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="logo" style="font-size:28px; margin-bottom:12px;">
                 <span class="logo-text">LRT</span><span class="logo-dot">.lt</span>
             </div>
-            <button class="search-btn">🔍 Paieška</button>
+            <p>Lietuvos nacionalinis radijas ir televizija</p>
+            <p>© 2026 LRT. Demo versija su Exacaster Analytics</p>
         </div>
-        <nav class="nav-menu">
-            <a href="/" class="nav-item">Pradžia</a>
-            <a href="#" class="nav-item active">Aktualijos</a>
-            <a href="#" class="nav-item">Mediateka</a>
-            <a href="#" class="nav-item">Radioteka</a>
-            <a href="#" class="nav-item">Kultūra</a>
-            <a href="#" class="nav-item">Sportas</a>
-        </nav>
-    </header>
-
-    <main class="article-page" id="article-content">
-        <a href="/" class="back-btn">← Grįžti į pradžią</a>
-
-        <article class="article-header">
-            <h1 class="article-title">Straipsnio pavadinimas bus įkeltas dinamiškai</h1>
-            <div class="article-info">
-                <span class="article-author">Autorius: Jonas Jonaitis</span>
-                <span class="article-date">2024 m. balandžio 17 d.</span>
-                <span class="article-read-time">Skaitymo laikas: 5 min.</span>
-            </div>
-        </article>
-
-        <img src="https://via.placeholder.com/900x500/0066CC/FFFFFF?text=Straipsnio+Nuotrauka" alt="Article Image" class="article-image">
-
-        <div class="article-body">
-            <p><strong>Įvadas.</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu tellus in lectus tempus consequat. Sed consectetur mauris vitae enim eleifend, sit amet bibendum tortor cursus.</p>
-
-            <p>Praesent accumsan dolor at nibh tincidunt, vel blandit lorem fermentum. Mauris id nisi at ante vestibulum tempor. Curabitur consectetur justo et massa vehicula, non condimentum nisi tempus. Integer sed ligula ac elit condimentum lacinia sed vel mauris.</p>
-
-            <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed accumsan neque sed tortor finibus, sed cursus odio consectetur. Donec tincidunt arcu non erat vehicula, at gravida dolor tempus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-
-            <p>Nam vitae enim sed elit eleifend tempus. Vivamus vel tempor justo. Sed vitae mauris sed magna tincidunt rutrum. Nullam condimentum ipsum a tortor venenatis, at cursus tortor vestibulum. Maecenas sed velit at odio aliquam sodales.</p>
-
-            <p>Praesent volutpat turpis vel velit bibendum, sed pretium massa blandit. Nulla facilisi. Ut commodo tortor in massa eleifend cursus. Aliquam erat volutpat. Donec vitae leo sed ipsum auctor ullamcorper.</p>
+        <div class="footer-links">
+            <h4>Naujienos</h4>
+            <a href="/category/aktualijos">Aktualijos</a>
+            <a href="/category/politika">Politika</a>
+            <a href="/category/ekonomika">Ekonomika</a>
+            <a href="/category/sportas">Sportas</a>
         </div>
-
-        <div class="share-buttons">
-            <h3>Dalintis:</h3>
-            <a href="#" class="share-btn" data-share="facebook">Facebook</a>
-            <a href="#" class="share-btn" data-share="twitter">Twitter</a>
-            <a href="#" class="share-btn" data-share="linkedin">LinkedIn</a>
-            <a href="#" class="share-btn" data-share="email">El. paštas</a>
+        <div class="footer-links">
+            <h4>LRT</h4>
+            <a href="#">Apie mus</a>
+            <a href="#">Kontaktai</a>
+            <a href="#">Privatumo politika</a>
         </div>
+    </div>
+</footer>
 
-        <div class="related-articles">
-            <h3>Susiję straipsniai</h3>
-            <div class="related-grid">
-                <div class="related-item" data-related-id="r1">
-                    <img src="https://via.placeholder.com/300x150/990000/FFFFFF?text=Susijęs+1" alt="Related 1">
-                    <h4>Kitas svarbus įvykis mieste: ekspertų komentarai</h4>
+<script type="module" src="analytics.js"></script>
+<script type="module">
+import { Analytics } from '/node_modules/exacaster-analytics/exacaster-analytics-library.mjs';
+
+const ARTICLES = {
+    '1': {
+        title: 'Prezidentas susitiko su ES atstovais: svarbūs pokalbiai dėl Lietuvos ateities ir saugumo garantijų',
+        lead: 'Valstybės vadovas pabrėžė, kad Lietuva yra pasirengusi didinti gynybos išlaidas ir aktyviau dalyvauti NATO misijose.',
+        category: 'Politika',
+        author: 'Jonas Jonaitis',
+        date: '2026 m. balandžio 24 d.',
+        readTime: '4 min. skaitymas',
+        image: 'https://picsum.photos/seed/art1/900/500',
+        caption: 'Prezidentas Gitanas Nausėda su Europos Komisijos pirmininke Briuselyje. LRT nuotr.',
+        tags: ['Politika', 'ES', 'Gynyba', 'NATO'],
+        related: ['2', '5', '10'],
+        body: `
+<p><strong>Vilnius, balandžio 24 d.</strong> Lietuvos Prezidentas Gitanas Nausėda ketvirtadienį Briuselyje susitiko su aukštais Europos Sąjungos atstovais, kurių metu buvo aptarti klausimai, susiję su Lietuvos saugumu, gynybos biudžeto didinimu ir narystės NATO perspektyvomis.</p>
+
+<p>Susitikimo metu šalies vadovas pabrėžė, kad Lietuva yra viena iš lyderiaujančių valstybių pagal gynybos išlaidų santykį su BVP ir ketina šį rodiklį didinti iki 5 procentų iki 2028 metų.</p>
+
+<blockquote class="article-quote">"Lietuva nėra valstybė, kuri tik prašo saugumo garantijų – mes jas aktyviai kuriam patys ir prisidedame prie bendros Europos gynybos architektūros," – sakė Prezidentas po susitikimo.</blockquote>
+
+<p>Europos Komisijos atstovai aukštai įvertino Lietuvos iniciatyvą ir pažadėjo remti šalį struktūrinių fondų lėšomis gynybos pramonės plėtrai. Taip pat aptarti klausimai dėl Baltijos jūros saugumo ir greitojo reagavimo pajėgų dislokavimo regione.</p>
+
+<p>Be gynybos klausimų, susitikime taip pat buvo kalbėta apie žaliojo kurso įgyvendinimą, energetinę nepriklausomybę bei Lietuvos atjungimą nuo BRELL elektros tinklo. Numatyta, kad 2025 m. pabaigoje Lietuva galutinai prisijungs prie Vakarų Europos energetikos sistemos.</p>
+
+<p>Susitikimas truko beveik tris valandas. Po jo Prezidentas taip pat trumpai pasikalbėjo su Europos Parlamento pirmininku ir aptarė planuojamus ES teisės aktų pakeitimus, susijusius su informacine sauga ir kibernetiniais išpuoliais.</p>
+
+<p>Seimo nariai, komentavę susitikimą, džiaugėsi aktyvia Lietuvos pozicija europinėje darbotvarkėje. Opozicinės partijos paragino Vyriausybę užtikrinti, kad gynybos išlaidų didinimas nesukeltų papildomos naštos paprastiems mokesčių mokėtojams.</p>
+`
+    },
+    '2': {
+        title: 'Seimas svarsto naują mokesčių reformą: kas pasikeis paprastiems gyventojams',
+        lead: 'Naujoji mokesčių sistema turėtų įsigalioti nuo 2027 metų ir paveiks daugiau nei milijoną dirbančių lietuvių.',
+        category: 'Ekonomika',
+        author: 'Marta Stankevičiūtė',
+        date: '2026 m. balandžio 24 d.',
+        readTime: '5 min. skaitymas',
+        image: 'https://picsum.photos/seed/art2/900/500',
+        caption: 'Seimo rūmai Vilniuje. LRT nuotr.',
+        tags: ['Ekonomika', 'Mokesčiai', 'Seimas', 'Reforma'],
+        related: ['1', '5', '3'],
+        body: `
+<p><strong>Vilnius, balandžio 24 d.</strong> Lietuvos Seimas ketvirtadienį pirmajame svarstyme pritarė mokesčių reformos projektui, kuris iš esmės pertvarkytų gyventojų pajamų mokestį ir socialinio draudimo įmokas.</p>
+
+<p>Pagal naująjį projektą, mažesnes pajamas gaunančių gyventojų GPM tarifas būtų sumažintas nuo 20 iki 15 procentų, tačiau tuo pat metu planuojama panaikinti dalį dabartinių lengvatų. Didesnių pajamų grupei – virš 2 500 eurų per mėnesį – mokestis padidėtų nuo 32 iki 35 procentų.</p>
+
+<blockquote class="article-quote">"Ši reforma siekia didesnio teisingumo: tie, kurie uždirba mažiau, mokės mažiau. Tuo pačiu norime užtikrinti, kad biudžetas neprarastų pajamų," – žurnalistams sakė finansų ministrė.</blockquote>
+
+<p>Ekonomistai reformą vertina nevienareikšmiškai. Vieni sveikina progresyvesnę struktūrą, kiti perspėja, kad aukštesnio tarifo įvedimas didesnėms pajamoms gali paskatinti darbo rinkos dalyvius ieškoti būdų, kaip optimizuoti mokesčius.</p>
+
+<p>Verslo organizacijos ragina nepamiršti ir darbdavių socialinio draudimo įmokų reformos – šiuo metu šis klausimas paliktas kitam etapui. Prekybos pramonės ir amatų rūmų prezidentas pabrėžė, kad tik kompleksinė reforma duos tvarų rezultatą.</p>
+
+<p>Antrasis svarstymas Seime numatytas kitą mėnesį. Jei projektas bus priimtas, jis pereis į Prezidentūrą pasirašyti, o nauja sistema įsigaliotų nuo 2027 m. sausio 1 dienos.</p>
+`
+    },
+    '3': {
+        title: 'Vilniuje atidaromas naujas inovacijų centras: tikimasi pritraukti užsienio investicijų',
+        lead: 'Prie Santaros klinikų komplekso duris atvers technologijų ir sveikatos inovacijų parkas – didžiausias tokio pobūdžio projektas Baltijos šalyse.',
+        category: 'Verslas',
+        author: 'Tadas Rimkus',
+        date: '2026 m. balandžio 23 d.',
+        readTime: '3 min. skaitymas',
+        image: 'https://picsum.photos/seed/art3/900/500',
+        caption: 'Inovacijų centro vizualizacija. Projekto organizatorių nuotr.',
+        tags: ['Verslas', 'Inovacijos', 'Vilnius', 'Investicijos'],
+        related: ['8', '2', '5'],
+        body: `
+<p><strong>Vilnius, balandžio 23 d.</strong> Vilniuje oficialiai atidaromas naujasis „HealthTech Hub" – inovacijų centras, kuriame susijungs sveikatos technologijų startuoliai, mokslo institutai ir tarptautiniai investuotojai.</p>
+
+<p>Centras įsikūrė 8 000 kv. metrų plote ir šiuo metu jame veikia 34 įmonės bei mokslo grupės. Per artimiausius dvejus metus tikimasi, kad čia įsikurs ne mažiau kaip 80 organizacijų ir bus sukurta apie 1 200 naujų darbo vietų.</p>
+
+<p>Projekto iniciatoriai pabrėžia, kad pagrindinis akcentas – sinergija tarp medicinos ir technologijų: dirbtinis intelektas diagnostikoje, nuotolinė sveikatos priežiūra ir personalizuota medicina.</p>
+
+<blockquote class="article-quote">"Lietuva turi unikalią galimybę tapti Šiaurės Europos sveikatos technologijų centru. Mūsų specialistų kokybė ir infrastruktūra yra konkurencingas pranašumas," – sakė centro direktorius.</blockquote>
+
+<p>Prie projekto prisidėjo Europos regioninės plėtros fondas, skiriant 12 mln. eurų, bei keli privatūs investuotojai iš Vokietijos ir Skandinavijos. Numatyta, kad per 5 metus projektas atsipirks ir generuos pajamas iš narystės mokesčių bei komercinės veiklos.</p>
+`
+    },
+    '4': {
+        title: 'Lietuvos krepšininkai ruošiasi svarbiam Europos čempionato turui: treneris optimistiškai nusiteikęs',
+        lead: 'Rinktinė kitą savaitę vyksta į Vokietiją, kur žais tris atrankos rungtynes. Treneris Kazys Maksvytis atskleidė pagrindinio penketuko sudėtį.',
+        category: 'Krepšinis',
+        author: 'Eimantas Bernotas',
+        date: '2026 m. balandžio 24 d.',
+        readTime: '4 min. skaitymas',
+        image: 'https://picsum.photos/seed/art4/900/500',
+        caption: 'Lietuvos krepšinio rinktinė treniruotėje. LRT nuotr.',
+        tags: ['Krepšinis', 'Sportas', 'Rinktinė', 'Europos čempionatas'],
+        related: ['9', '11', '1'],
+        body: `
+<p><strong>Kaunas, balandžio 24 d.</strong> Lietuvos vyrų krepšinio rinktinė baigia pasiruošimą Europos čempionato atrankos turnyrui, kuris vyks Miunchene balandžio 28–30 dienomis. Rinktinė gruodį sužais su Vokietija, Graikija ir Kroatija.</p>
+
+<p>Vyriausiasis treneris Kazys Maksvytis per spaudos konferenciją patvirtino, kad pagrindiniam penketukui vadovaus Rokas Jokubaitis, o šokliausiu žaidėju tikimasi Manto Rubštavičio pasirodymo po traumos.</p>
+
+<blockquote class="article-quote">"Turime tikslą – laimėti visas tris rungtynes. Žinome, kad tai sudėtinga, bet komanda yra sveika ir motyvuota. Tikiu kiekvienu savo žaidėju," – sakė treneris.</blockquote>
+
+<p>Per pastarąsias dvi treniruočių savaites rinktinė atliko 14 treniruočių ir žaidė dvi draugiškas rungtynes su Latvija – laimėjo abi. Ypač gerai sekėsi gynybinė komanda: Latvija neperžengnė 70 taškų nė vienose rungtynėse.</p>
+
+<p>Vilties teikia ir tai, kad iš NBA grįžo Domantас Sabonis, kuris šį sezoną su „Sacramento Kings" parodė geriausią savo karjeros sezoną. Jo dalyvavimas atrankinėse rungtynėse dar nepatvirtintas dėl sutartinių įsipareigojimų klubui, tačiau derybos vyksta.</p>
+
+<p>Bilietus į rungtynes Vilniuje jau galima įsigyti internetinėse bilietų platformose. Pirmosios namų rungtynės prieš Graikijos rinktinę vyks gegužės 15 dieną Žalgirio arenoje.</p>
+`
+    },
+    '5': {
+        title: 'Lietuvos BVP augimas viršijo prognozes: ekspertai tikisi teigiamų pokyčių',
+        lead: 'Statistikos departamento duomenimis, šalies ekonomika pirmąjį ketvirtį augo 3,2 proc. – daugiau nei buvo prognozuota.',
+        category: 'Ekonomika',
+        author: 'Marta Stankevičiūtė',
+        date: '2026 m. balandžio 23 d.',
+        readTime: '5 min. skaitymas',
+        image: 'https://picsum.photos/seed/art5/900/500',
+        caption: 'Verslo kvartalas Vilniuje. LRT nuotr.',
+        tags: ['Ekonomika', 'BVP', 'Augimas', 'Lietuva'],
+        related: ['2', '3', '8'],
+        body: `
+<p><strong>Vilnius, balandžio 23 d.</strong> Lietuvos ekonomika pirmąjį 2026 metų ketvirtį augo 3,2 procento, pranešė Statistikos departamentas. Analistai buvo prognozavę 2,4 proc. augimą, tad realus rezultatas viršijo lūkesčius beveik procentu.</p>
+
+<p>Pagrindiniai augimo varikliai – paslaugų sektorius, eksportas bei vartojimo išlaidos. Ypač gerai sekėsi informacinių technologijų sektoriui, kuris augo 8,7 proc., ir logistikai.</p>
+
+<p>Lietuvos banko valdybos narys Gediminas Šimkus teigė, kad šie duomenys leidžia tikėtis, jog metinis augimas sieks apie 3 procentus – tai būtų geriausi rezultatai nuo 2021 metų.</p>
+
+<blockquote class="article-quote">"Ekonomika rodo gerą atsparumą nepaisant sudėtingos geopolitinės aplinkos. Tai signalizuoja, kad struktūrinės reformos duoda vaisių," – sakė Šimkus.</blockquote>
+
+<p>Tuo pat metu infliacijos tempas sulėtėjo iki 2,1 proc. – žemiausio lygio nuo 2020 metų. Tai suteikia Europos Centriniams bankams erdvės mažinti palūkanų normas.</p>
+
+<p>Nedarbo lygis liko beveik nepakitęs – 6,1 proc., tačiau darbo jėgos stygiaus problema tam tikruose sektoriuose – ypač IT, sveikatos apsaugoje ir statybose – išlieka aktuali.</p>
+`
+    },
+    '6': {
+        title: 'Nacionaliniame muziejuje atidaroma unikali paroda apie Lietuvos istorijos lūžio taškus',
+        lead: 'Ekspozicijoje – daugiau nei 500 eksponatų iš Lietuvos ir užsienio archyvų, apimančių laikotarpį nuo Lietuvos valstybės atkūrimo iki šių dienų.',
+        category: 'Kultūra',
+        author: 'Jurgita Balčiūnaitė',
+        date: '2026 m. balandžio 22 d.',
+        readTime: '3 min. skaitymas',
+        image: 'https://picsum.photos/seed/art6/900/500',
+        caption: 'Viena iš parodos salių. Nacionalinio muziejaus nuotr.',
+        tags: ['Kultūra', 'Muziejus', 'Istorija', 'Paroda'],
+        related: ['15', '16', '17'],
+        body: `
+<p><strong>Vilnius, balandžio 22 d.</strong> Lietuvos nacionaliniame muziejuje ketvirtadienį iškilmingai atidaryta didelė paroda „Lūžio taškai: Lietuva XX–XXI amžiuje", skirta šalies istorijos posūkiniams momentams atminti ir permąstyti.</p>
+
+<p>Ekspoziciją sudaro penkios teminės erdvės: Nepriklausomybė (1918–1940), Okupacijos metai, Atgimimas ir Sąjūdis, Nepriklausomybės atkūrimas bei Lietuva šiandien. Kiekvienoje salėje – interaktyvūs elementai, archyvinė medžiaga ir originalūs eksponatai.</p>
+
+<blockquote class="article-quote">"Ši paroda – ne tik atminimas, bet ir pokalbis su lankytojais: kaip šie įvykiai formavo mūsų tapatybę ir kur einame toliau," – sakė muziejaus direktorė.</blockquote>
+
+<p>Tarp eksponatų – unikalūs Sąjūdžio laikotarpio dokumentai, Laisvės gynėjų asmeniniai daiktai, Sausio 13-osios fotografijų kolekcija iš Baltijos Aido archyvų, taip pat pirmieji atkurtos Lietuvos paso originalai.</p>
+
+<p>Paroda veiks iki 2026 m. rugsėjo 30 d. Penktadieniais įėjimas nemokamas. Mokyklos grupėms numatytos specialios edukacinės programos su gidais.</p>
+`
+    },
+    '7': {
+        title: 'Medikai perspėja dėl gripo sezono: ragina skiepytis laiku ir nevilkinti',
+        lead: 'Sveikatos apsaugos ministerija praneša, kad skiepai nuo gripo jau prieinami visose pirminės priežiūros įstaigose.',
+        category: 'Sveikata',
+        author: 'dr. Algis Norvaišas',
+        date: '2026 m. balandžio 24 d.',
+        readTime: '4 min. skaitymas',
+        image: 'https://picsum.photos/seed/art7/900/500',
+        caption: 'Skiepijimo kabinetas šeimos gydytojo klinikoje. LRT nuotr.',
+        tags: ['Sveikata', 'Gripas', 'Skiepai', 'Medicina'],
+        related: ['1', '5', '10'],
+        body: `
+<p><strong>Vilnius, balandžio 24 d.</strong> Sveikatos apsaugos ministerija ir Užkrečiamųjų ligų ir AIDS centras (ULAC) paskelbė pranešimą visuomenei, ragindami pasiskiepyti nuo gripo anksčiau nei įprastai – šiemet gripo sezonas gali prasidėti jau spalio mėnesį.</p>
+
+<p>Epidemiologai teigia, kad šį sezoną cirkuliuojantis viruso padermė yra agresyvesnė nei praėjusiais metais. Ypač pažeidžiami – vyresni nei 65 metų žmonės, vaikai iki 5 metų ir lėtinėmis ligomis sergantys asmenys.</p>
+
+<blockquote class="article-quote">"Skiepas nuo gripo apsaugo ne tik jus, bet ir aplinkinius – ypač tuos, kurie dėl sveikatos būklės negali skiepytis. Tai solidarumo aktas," – aiškino Infekcinių ligų specialistas dr. Paulius Laukys.</blockquote>
+
+<p>Šiemet skiepai nuo gripo bus kompensuojami rizikos grupių atstovams: pensinio amžiaus žmonėms, nėščiosioms, medikams ir ypač pažeidžiamoms grupėms. Visi kiti turės sumokėti 8–15 eurų, priklausomai nuo skiepų gamintojo.</p>
+
+<p>Ministerija taip pat primena: jei vis dėlto susirgote gripu, likite namuose, gerkite daug skysčių ir kreipkitės į gydytoją, jei karščiuoja ilgiau nei tris dienas arba atsiranda sunkaus kvėpavimo simptomai.</p>
+`
+    },
+    '8': {
+        title: 'Lietuvos startuolis pritraukė milijoninę investiciją: planuoja plėtrą į Vakarų Europą',
+        lead: 'Vilniaus dirbtinio intelekto bendrovė „NeuralBalt" gavo 8 mln. eurų investiciją iš Vokietijos rizikos kapitalo fondo.',
+        category: 'Technologijos',
+        author: 'Tadas Rimkus',
+        date: '2026 m. balandžio 23 d.',
+        readTime: '3 min. skaitymas',
+        image: 'https://picsum.photos/seed/art8/900/500',
+        caption: '„NeuralBalt" komanda Vilniaus biure. Bendrovės nuotr.',
+        tags: ['Technologijos', 'Startuoliai', 'Investicijos', 'Dirbtinis intelektas'],
+        related: ['3', '2', '5'],
+        body: `
+<p><strong>Vilnius, balandžio 23 d.</strong> Lietuvos dirbtinio intelekto startuolis „NeuralBalt" paskelbė sėkmingai užbaigęs A serijos finansavimo raundą, kurio metu surinkti 8 milijonai eurų iš Vokietijos rizikos kapitalo fondo „BerlinVC" ir kelių angelų investuotojų.</p>
+
+<p>Bendrovė kuria automatizuotą dokumentų apdorojimo platformą, paremtą dideliais kalbų modeliais. Jos klientai – daugiau nei 200 verslo įmonių Baltijos šalyse, Lenkijoje ir Skandinavijoje.</p>
+
+<blockquote class="article-quote">"Šios investicijos dėka galėsime patrigubinti komandą ir iki metų pabaigos atidaryti biurus Berlyne bei Amsterdame. Vakarų Europos rinka yra mūsų pagrindinis tikslas," – sakė įmonės vadovas Mantas Žukauskas.</blockquote>
+
+<p>„NeuralBalt" buvo įkurtas 2023 metais. Per pastaruosius metus bendrovės pajamos išaugo keturis kartus, o dabar siekia 2,4 mln. eurų per metus. Vertintojai teigia, kad šios srities paklausa Europoje auga eksponentiškai dėl augančio dokumentų tvarkymo automatizavimo poreikio.</p>
+
+<p>Tai jau ketvirtas didelis investavimo į Lietuvos technologijų startuolius raundas šiais metais, rodantis augantį užsienio investuotojų pasitikėjimą Lietuvos IT ekosistema.</p>
+`
+    },
+    '9': {
+        title: 'Lietuvos lengvaatlečiai pasiekė puikių rezultatų tarptautinėse varžybose Berlyne',
+        lead: 'Berlyne vykusiame Europos lengvosios atletikos čempionate Lietuva laimėjo dvi sidabro ir vieną bronzos medalį.',
+        category: 'Sportas',
+        author: 'Eimantas Bernotas',
+        date: '2026 m. balandžio 22 d.',
+        readTime: '3 min. skaitymas',
+        image: 'https://picsum.photos/seed/art9/900/500',
+        caption: 'Lietuvos sportininkė finišo tiesiojoje. Reuters nuotr.',
+        tags: ['Sportas', 'Lengvoji atletika', 'Čempionatas', 'Medaliai'],
+        related: ['4', '11', '1'],
+        body: `
+<p><strong>Berlynas, balandžio 22 d.</strong> Berlyne vykusiame Europos lengvosios atletikos taurės varžybose Lietuva pasiekė geriausią savo rezultatą per pastarąjį dešimtmetį – laimėti du sidabro ir vienas bronzos medalis.</p>
+
+<p>Sidabro medalius pelnė Monika Petrova (didelio aukščio šuoliai) ir vyrų 4x400 m bėgimo estafetė, kuri finišavo vos 0,12 sekundės atsilikusi nuo pirmaujančios Prancūzijos rinktinės.</p>
+
+<p>Bronzos medalį laimėjo Arnas Janulis, kuris disko metyme pasiekė asmeninį rekordą – 67,4 m. Tai geriausias Lietuvos metikų pasiekimas nuo 2019 metų.</p>
+
+<blockquote class="article-quote">"Tai didžiulis pasiekimas. Mes rodome, kad Lietuva gali konkuruoti su geriausiais Europoje net ir turėdama gerokai mažesnį biudžetą nei kitos šalys," – sakė Lietuvos lengvosios atletikos federacijos prezidentas.</blockquote>
+
+<p>Artėjant 2028 metų Olimpinėms žaidynėms Los Andžele, šie rezultatai suteikia vilčių, kad keli Lietuvos lengvaatlečiai galėtų pasiekti olimpines normas.</p>
+`
+    },
+    '10': {
+        title: 'Vyriausybė pristatė naują aplinkosaugos strategiją: siekis – nulinė tarša iki 2035 metų',
+        lead: 'Strategijoje numatytos konkrečios priemonės, kaip mažinti pramonės ir transporto keliamą taršą. Kritikai sako, kad tikslai per ambicingi.',
+        category: 'Aplinka',
+        author: 'Rimas Paulauskas',
+        date: '2026 m. balandžio 24 d.',
+        readTime: '5 min. skaitymas',
+        image: 'https://picsum.photos/seed/art10/900/500',
+        caption: 'Vėjo jėgainės prie Klaipėdos. LRT nuotr.',
+        tags: ['Aplinka', 'Klimatas', 'Vyriausybė', 'Strategija'],
+        related: ['1', '5', '3'],
+        body: `
+<p><strong>Vilnius, balandžio 24 d.</strong> Aplinkos ministerija ketvirtadienį Seimui pristatė naują Nacionalinę klimato ir aplinkos strategiją iki 2035 metų, kurioje numatytas ambicinis tikslas – pasiekti nulinę grynąją anglies dvideginio emisiją.</p>
+
+<p>Strategijoje išskirtos keturios prioritetinės sritys: energetika (perėjimas prie atsinaujinančių šaltinių), transportas (elektromobilių skatinimas), žemės ūkis (ekologinė gamyba) ir pramonė (žaliosios technologijos).</p>
+
+<blockquote class="article-quote">"2035-ieji nėra tolima ateitis. Turime pradėti veikti jau dabar – kiekvienas sprendimas, kurį priimame šiandien, turės pasekmių ateities kartoms," – sakė aplinkos ministerė.</blockquote>
+
+<p>Strategija numato, kad iki 2030 metų mažiausiai 50 proc. Lietuvos elektros energijos bus gaminama iš atsinaujinančių šaltinių – vėjo, saulės ir biomasės. Šiuo metu šis skaičius siekia apie 28 proc.</p>
+
+<p>Verslo organizacijos perspėja, kad kai kurios priemonės gali padidinti gamybos kaštus ir susilpninti Lietuvos įmonių konkurencingumą. Tačiau Vyriausybė tikina, kad perėjimas prie žaliosios ekonomikos ilgainiui sukurs daugiau darbo vietų nei panaikins.</p>
+
+<p>Strategija bus teikiama Seimui tvirtinti birželio mėnesį.</p>
+`
+    },
+    '11': {
+        title: 'Lietuvos futbolo rinktinė pradeda pasiruošimą Europos atrankos rungtynėms',
+        lead: 'Naujasis vyriausiasis treneris Valdas Urbonas paskelbė 23 žaidėjų sąrašą atrankos rungtynėms.',
+        category: 'Futbolas',
+        author: 'Eimantas Bernotas',
+        date: '2026 m. balandžio 22 d.',
+        readTime: '3 min. skaitymas',
+        image: 'https://picsum.photos/seed/art11/900/500',
+        caption: 'Lietuvos futbolo rinktinė per treniruotę. LRT nuotr.',
+        tags: ['Futbolas', 'Sportas', 'Rinktinė', 'Atrankinės'],
+        related: ['4', '9', '1'],
+        body: `
+<p><strong>Kaunas, balandžio 22 d.</strong> Lietuvos futbolo rinktinės naujasis vyriausiasis treneris Valdas Urbonas pirmadienį paskelbė 23 žaidėjų sąrašą, kurie ruošiasi 2028 metų Europos čempionato atrankos rungtynėms.</p>
+
+<p>Sąraše – 5 debiutantai, tarp kurių žurnalistus labiausiai domina 21 metų gynėjas Erikas Paliulis, žaidžiantis Olandijos pirmojoje lygoje.</p>
+
+<p>Rinktinė kitą savaitę susirenka Kaune. Pirmosios atrankos rungtynės vyks gegužės 7 d. prieš Estiją, o gegužės 10 d. – prieš Armėniją Jereване.</p>
+
+<blockquote class="article-quote">"Mano tikslas – kurti žaidimą, o ne tik ginantis laukti progos kontratakai. Turime žaisti drąsiai, ypač namie," – sakė treneris Urbonas.</blockquote>
+
+<p>Lietuvos rinktinė yra D grupėje kartu su Olandija, Estija ir Armėnija. Ekspertai prognozuoja, kad antroji vieta grupėje yra realistinis tikslas.</p>
+`
+    },
+    '15': {
+        title: 'Nacionalinis dramos teatras pristato naują spektaklį pagal Donelaitį',
+        lead: 'Režisierius Jonas Vaitkus pristato drąsią šiuolaikišką Donelaitio „Metų" interpretaciją.',
+        category: 'Teatras',
+        author: 'Jurgita Balčiūnaitė',
+        date: '2026 m. balandžio 22 d.',
+        readTime: '3 min. skaitymas',
+        image: 'https://picsum.photos/seed/art15/900/500',
+        caption: 'Spektaklio repeticija. Nacionalinio dramos teatro nuotr.',
+        tags: ['Teatras', 'Kultūra', 'Donelaitis', 'Spektaklis'],
+        related: ['6', '16', '17'],
+        body: `
+<p><strong>Vilnius, balandžio 22 d.</strong> Lietuvos nacionalinis dramos teatras gegužės 3 dieną pristatys naują spektaklį „Metai" pagal Kristijono Donelaitio poemą – pirmą kartą šis kūrinys adaptuojamas tokiu mastu lietuvių teatre.</p>
+
+<p>Spektaklį režisuoja Jonas Vaitkus, o scenografija sukurta kartu su garsia vokiečių dailininke. Pastatyme dalyvaus 30 aktorių, bus naudojama inovatyvaus apšvietimo technologija.</p>
+
+<blockquote class="article-quote">"Donelaitis rašė apie metų ratą – bet iš tikrųjų tai amžinas klausimas apie tai, kas keičiasi ir kas išlieka. Šiandien tai labai aktualu," – sakė režisierius.</blockquote>
+
+<p>Premjera vyks gegužės 3 d. Bilietai jau parduodami teatrų kasose ir internetu.</p>
+`
+    },
+    '16': {
+        title: 'Eurovizijos atstovė Lietuva pristatė oficialų vaizdo klipą Europai',
+        lead: 'Grupė „Silvester Belt" išleido vaizdo klipą dainai „Tavo akys", kuri atstovaus Lietuvą Bazelyje.',
+        category: 'Muzika',
+        author: 'Jurgita Balčiūnaitė',
+        date: '2026 m. balandžio 21 d.',
+        readTime: '2 min. skaitymas',
+        image: 'https://picsum.photos/seed/art16/900/500',
+        caption: 'Grupė „Silvester Belt". LRT nuotr.',
+        tags: ['Muzika', 'Eurovizija', 'Kultūra', 'Lietuva'],
+        related: ['6', '15', '17'],
+        body: `
+<p><strong>Vilnius, balandžio 21 d.</strong> Lietuva oficialiai pristatė Eurovizijos 2026 vaizdo klipą – grupė „Silvester Belt" išleido dainai „Tavo akys" skirtą vizualinį kūrinį, kuris jau per pirmą dieną sulaukė daugiau nei pusės milijono peržiūrų „YouTube".</p>
+
+<p>Klipas buvo filmuotas trijose Lietuvos vietose – Vilniuje, Nidoje ir Kernavėje. Jame pabrėžiamas Lietuvos gamtos ir kultūros grožis.</p>
+
+<blockquote class="article-quote">"Norėjome, kad pasaulis pamatytų Lietuvą tokią, kokią mes ją matome: gražią, šiltą ir įdomią. Tikimės, kad žiūrovai ne tik klausys dainos, bet ir norės atvykti pas mus," – sakė grupės solistė.</blockquote>
+
+<p>Lietuva Eurovizijoje dalyvaus gegužės pusfinaliuose. Antrasis pusfinalis, kuriame dalyvaus Lietuva, vyks gegužės 15 dieną.</p>
+`
+    },
+    '17': {
+        title: 'Paskelbtas metų knygos rinkinio nugalėtojas: tai debiutinis romanas',
+        lead: 'Jaunosios autorės Laimos Kazlauskaitės romanas „Šiltas oras Arktikoje" laimėjo geriausios metų knygos titulą.',
+        category: 'Literatūra',
+        author: 'Jurgita Balčiūnaitė',
+        date: '2026 m. balandžio 20 d.',
+        readTime: '3 min. skaitymas',
+        image: 'https://picsum.photos/seed/art17/900/500',
+        caption: 'Autorė Laima Kazlauskaitė su apdovanojimu. LRT nuotr.',
+        tags: ['Literatūra', 'Kultūra', 'Knyga', 'Apdovanojimai'],
+        related: ['6', '15', '16'],
+        body: `
+<p><strong>Vilnius, balandžio 20 d.</strong> Tradicinėje metų knygų apdovanojimų ceremonijoje geriausiu metų kūriniu paskelbtas Laimos Kazlauskaitės debiutinis romanas „Šiltas oras Arktikoje".</p>
+
+<p>Romanas pasakoja apie jauną klimatologę, kuri išvyksta į Grenlandiją ir ten susiduria su asmeniniu ir profesiniu lūžiu. Kūrinys sulaukė itin šiltų recenzijų ir per pirmuosius tris mėnesius pardavė daugiau nei 8 000 egzempliorių.</p>
+
+<blockquote class="article-quote">"Negaliu patikėti. Šis romanas – mano pirmoji knyga, ir gauti tokį įvertinimą yra tiesiog stebuklas. Ačiū visiems skaitytojams," – verkdama sakė autorė ceremonijoje.</blockquote>
+
+<p>Laureato premija – 10 000 eurų. Knyga taip pat buvo nominuota Europos literatūros premijai ir šiuo metu verčiama į 6 kalbas.</p>
+`
+    }
+};
+
+const urlParts = window.location.pathname.split('/');
+const articleId = urlParts[urlParts.length - 1] || '1';
+const article = ARTICLES[articleId] || ARTICLES['1'];
+
+// Set page content
+document.title = article.title + ' – LRT.lt';
+document.getElementById('article-title').textContent = article.title;
+document.getElementById('article-lead').textContent = article.lead;
+document.getElementById('article-category').textContent = article.category;
+document.getElementById('article-author').textContent = article.author;
+document.getElementById('article-date').textContent = article.date;
+document.getElementById('article-readtime').textContent = article.readTime;
+document.getElementById('article-image').src = article.image;
+document.getElementById('article-image').alt = article.title;
+document.getElementById('article-caption').textContent = article.caption;
+document.getElementById('article-body').innerHTML = article.body;
+document.getElementById('breadcrumb-category').textContent = article.category;
+document.getElementById('breadcrumb-title').textContent = article.title.substring(0, 50) + '…';
+
+// Tags
+if (article.tags) {
+    document.getElementById('article-tags').innerHTML =
+        article.tags.map(t => `<span class="tag">${t}</span>`).join('');
+}
+
+// Related articles
+if (article.related) {
+    document.getElementById('related-articles').innerHTML = article.related
+        .filter(id => ARTICLES[id])
+        .map(id => {
+            const rel = ARTICLES[id];
+            return `<a href="/article/${id}" class="related-item" data-article-id="${id}" data-related-id="${id}">
+                <img src="${rel.image.replace('900/500','120/80')}" alt="${rel.title}">
+                <div>
+                    <span class="category" style="font-size:11px;">${rel.category}</span>
+                    <h4>${rel.title}</h4>
                 </div>
-                <div class="related-item" data-related-id="r2">
-                    <img src="https://via.placeholder.com/300x150/006633/FFFFFF?text=Susijęs+2" alt="Related 2">
-                    <h4>Vyriausybės pozicija šiuo klausimu: oficialus pareiškimas</h4>
-                </div>
-                <div class="related-item" data-related-id="r3">
-                    <img src="https://via.placeholder.com/300x150/CC6600/FFFFFF?text=Susijęs+3" alt="Related 3">
-                    <h4>Panašus atvejis prieš metus: kas pasikeitė?</h4>
-                </div>
-            </div>
-        </div>
-    </main>
+            </a>`;
+        }).join('');
+}
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>LRT.lt</h3>
-                <p>Lietuvos nacionalinis radijas ir televizija</p>
-                <p>© 2024 LRT. Demo versija su Exacaster Analytics</p>
-            </div>
-        </div>
-    </footer>
+// Copy link button
+document.getElementById('copyLinkBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        document.getElementById('copyLinkBtn').textContent = '✓ Nukopijuota!';
+        setTimeout(() => {
+            document.getElementById('copyLinkBtn').textContent = '🔗 Nukopijuoti nuorodą';
+        }, 2000);
+    });
+});
 
-    <script type="module" src="analytics.js"></script>
-    <script type="module">
-        import { Analytics } from '/node_modules/exacaster-analytics/exacaster-analytics-library.mjs';
+// Analytics tracking
+const startTime = Date.now();
+let scrollDepth = 0;
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const articleId = urlParams.get('id') || window.location.pathname.split('/').pop() || '1';
-
-        const articles = {
-            '1': { title: 'Prezidentas susitiko su ES atstovais: svarbūs pokalbiai dėl Lietuvos ateities', category: 'Politika' },
-            '2': { title: 'Seimas svarsto naują mokesčių reformą: kas pasikeis paprastiems gyventojams', category: 'Ekonomika' },
-            '3': { title: 'Vilniuje atidaromas naujas inovacijų centras: tikimasi pritraukti užsienio investicijų', category: 'Verslas' },
-            '4': { title: 'Lietuvos krepšininkai ruošiasi svarbiam turnyrui: treneris optimistiškai nusiteikęs', category: 'Sportas' },
-            '5': { title: 'Lietuvos BVP augimas viršijo prognozes: ekspertai tikisi teigiamų pokyčių', category: 'Ekonomika' },
-            '6': { title: 'Nacionaliniame muziejuje atidaroma unikali paroda apie Lietuvos istoriją', category: 'Kultūra' },
-            '7': { title: 'Medikai perspėja dėl gripo sezono: ragina skiepytis laiku', category: 'Sveikata' },
-            '8': { title: 'Lietuvos startuolis pritraukė milijoninę investiciją: planuoja plėtrą į užsienį', category: 'Technologijos' },
-            '9': { title: 'Lietuvos lengvaatlečiai pasiekė puikių rezultatų tarptautinėse varžybose', category: 'Sportas' },
-            '10': { title: 'Vyriausybė pristatė naują aplinkosaugos strategiją: siekis – švari Lietuva', category: 'Aplinka' }
-        };
-
-        const article = articles[articleId] || articles['1'];
-        document.querySelector('.article-title').textContent = article.title;
-
-        const startTime = Date.now();
-        let scrollDepth = 0;
-
-        window.addEventListener('scroll', () => {
-            const newScrollDepth = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
-            if (newScrollDepth > scrollDepth) {
-                scrollDepth = newScrollDepth;
-                if (scrollDepth % 25 === 0) {
-                    Analytics.getInstance().track('Article Scroll', {
-                        articleId: articleId,
-                        articleTitle: article.title,
-                        scrollDepth: scrollDepth,
-                        category: article.category
-                    });
-                }
-            }
-        });
-
-        window.addEventListener('beforeunload', () => {
-            const timeSpent = Math.round((Date.now() - startTime) / 1000);
-            Analytics.getInstance().track('Article Read Complete', {
-                articleId: articleId,
-                articleTitle: article.title,
-                timeSpent: timeSpent,
-                scrollDepth: scrollDepth,
-                category: article.category
+window.addEventListener('scroll', () => {
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const newDepth = docH > 0 ? Math.round((window.scrollY / docH) * 100) : 0;
+    if (newDepth > scrollDepth) {
+        scrollDepth = newDepth;
+        if (scrollDepth % 25 === 0) {
+            Analytics.getInstance().track('Article Scroll', {
+                articleId, articleTitle: article.title, scrollDepth, category: article.category
             });
-        });
-    </script>
+        }
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    const timeSpent = Math.round((Date.now() - startTime) / 1000);
+    Analytics.getInstance().track('Article Read Complete', {
+        articleId, articleTitle: article.title, timeSpent, scrollDepth, category: article.category
+    });
+});
+</script>
 </body>
 </html>
