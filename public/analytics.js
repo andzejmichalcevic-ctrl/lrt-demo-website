@@ -3,7 +3,7 @@ import { Analytics } from '/node_modules/exacaster-analytics/exacaster-analytics
 // Configuration for the analytics SDK
 const analyticsConfiguration = {
     writeKey: "demo-write-key-lrt-website",
-    endpoint: window.location.origin + "/analytics",
+    endpoint: window.location.origin,
     appName: "LRT Demo Website",
     appVersion: "1.0.0",
     appBuild: "1",

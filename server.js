@@ -28,8 +28,8 @@ app.get('/category/:slug', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'index.html'));
 });
 
-// Analytics collection endpoint
-app.post('/analytics', async (req, res) => {
+// Analytics collection endpoint — handles both /events (Exacaster SDK) and /analytics
+async function handleAnalyticsEvent(req, res) {
   try {
     const body = req.body;
 
@@ -69,7 +69,10 @@ app.post('/analytics', async (req, res) => {
       error: error.message
     });
   }
-});
+}
+
+app.post('/events', handleAnalyticsEvent);
+app.post('/analytics', handleAnalyticsEvent);
 
 // Analytics dashboard endpoint
 app.get('/analytics', (req, res) => {
