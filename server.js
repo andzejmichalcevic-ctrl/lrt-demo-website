@@ -31,7 +31,21 @@ app.get('/category/:slug', (req, res) => {
 // Analytics collection endpoint
 app.post('/analytics', async (req, res) => {
   try {
-    const events = Array.isArray(req.body) ? req.body : [req.body];
+    const body = req.body;
+
+    // Support both Segment batch format { batch: [...] } and simple { type, properties }
+    let events = [];
+    if (body.batch && Array.isArray(body.batch)) {
+      // Exacaster SDK sends Segment-compatible batch format
+      events = body.batch.map(e => ({
+        type: e.event || e.type || e.name || 'Unknown',
+        properties: { ...e.properties, ...e.context, anonymousId: e.anonymousId }
+      }));
+    } else if (Array.isArray(body)) {
+      events = body;
+    } else {
+      events = [body];
+    }
 
     for (const event of events) {
       const { type, properties = {} } = event;
@@ -39,16 +53,9 @@ app.post('/analytics', async (req, res) => {
       const userAgent = req.headers['user-agent'];
       const pageUrl = req.headers.referer || properties.url;
 
-      // Store in database
       await insertEvent(type, sessionId, userAgent, pageUrl, properties);
 
-      // Also log to console for debugging
-      console.log('Analytics Event:', {
-        type,
-        sessionId,
-        properties,
-        timestamp: new Date().toISOString()
-      });
+      console.log('Analytics Event:', { type, sessionId, properties, timestamp: new Date().toISOString() });
     }
 
     res.status(200).json({
