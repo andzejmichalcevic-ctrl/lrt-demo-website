@@ -3,406 +3,767 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics Dashboard - LRT Demo</title>
+    <title>Analytics Dashboard – LRT Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #333;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f1117;
+            color: #e2e8f0;
+            font-size: 14px;
+            min-height: 100vh;
         }
 
-        .dashboard-header {
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 20px;
+        /* ── Header ── */
+        .dash-header {
+            background: #1a1d27;
+            border-bottom: 1px solid #2d3148;
+            padding: 0 28px;
+            height: 60px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .dashboard-title {
-            font-size: 24px;
+        .dash-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .lrt-badge {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .lrt-badge span:first-child { color: #fff; }
+        .lrt-badge span:last-child  { color: #e30613; }
+
+        .dash-title {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+            border-left: 1px solid #2d3148;
+            padding-left: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .live-dot {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: #22c55e;
             font-weight: 600;
-            color: #111827;
+        }
+        .live-dot::before {
+            content: '';
+            width: 8px; height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: .5; transform: scale(1.4); }
         }
 
         .back-link {
-            color: #0066cc;
+            color: #64748b;
             text-decoration: none;
-            font-weight: 500;
+            font-size: 13px;
+            padding: 7px 14px;
+            border: 1px solid #2d3148;
+            border-radius: 6px;
+            transition: all .2s;
         }
+        .back-link:hover { color: #fff; border-color: #475569; }
 
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        .dashboard-content {
+        /* ── Layout ── */
+        .dash-body {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 28px 24px;
         }
 
-        .stats-grid {
+        /* ── Stat cards ── */
+        .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: #1a1d27;
+            border: 1px solid #2d3148;
+            border-radius: 10px;
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--accent, #e30613);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 10px;
         }
 
         .stat-value {
             font-size: 32px;
-            font-weight: 700;
-            color: #e30613;
-            margin-bottom: 8px;
+            font-weight: 800;
+            color: #f1f5f9;
+            line-height: 1;
+            margin-bottom: 6px;
         }
 
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            font-weight: 500;
+        .stat-sub {
+            font-size: 12px;
+            color: #475569;
         }
 
-        .events-section {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        /* ── Charts row ── */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
-        .section-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #e0e0e0;
+        .charts-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: #1a1d27;
+            border: 1px solid #2d3148;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #2d3148;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: .6px;
         }
 
-        .filters {
-            display: flex;
-            gap: 12px;
+        .card-badge {
+            font-size: 11px;
+            background: #1e293b;
+            color: #64748b;
+            padding: 3px 9px;
+            border-radius: 20px;
+            border: 1px solid #2d3148;
         }
 
-        .filter-select {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            background: white;
-            font-size: 14px;
+        .card-body { padding: 20px; }
+
+        .chart-wrap {
+            position: relative;
+            height: 260px;
         }
 
-        .refresh-btn {
-            background: #e30613;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
+        .chart-wrap-sm {
+            position: relative;
+            height: 220px;
         }
 
-        .refresh-btn:hover {
-            background: #c2051a;
-        }
-
-        .events-table {
+        /* ── Top articles table ── */
+        .articles-table {
             width: 100%;
             border-collapse: collapse;
         }
-
-        .events-table th,
-        .events-table td {
-            padding: 12px 16px;
+        .articles-table th {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+            color: #475569;
+            padding: 0 16px 12px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #2d3148;
         }
-
-        .events-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            font-size: 12px;
-            color: #374151;
-            text-transform: uppercase;
-        }
-
-        .events-table td {
+        .articles-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #1e293b;
             font-size: 13px;
-            vertical-align: top;
+            color: #cbd5e1;
+        }
+        .articles-table tr:last-child td { border-bottom: none; }
+        .articles-table tr:hover td { background: #1e293b; }
+
+        .art-rank {
+            font-size: 18px;
+            font-weight: 800;
+            color: #334155;
+            width: 36px;
         }
 
-        .event-type {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
+        .art-title {
+            font-weight: 500;
+            color: #e2e8f0;
+            max-width: 280px;
         }
 
-        .event-data {
-            max-width: 300px;
-            word-break: break-word;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 11px;
-            background: #f5f5f5;
-            padding: 8px;
-            border-radius: 4px;
-            max-height: 100px;
+        .bar-cell { width: 120px; }
+        .mini-bar-wrap {
+            background: #1e293b;
+            border-radius: 3px;
+            height: 6px;
+            overflow: hidden;
+        }
+        .mini-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e30613, #ff4d5e);
+            border-radius: 3px;
+            transition: width .6s ease;
+        }
+
+        /* ── Live stream ── */
+        .stream-body {
+            padding: 0;
+            max-height: 340px;
             overflow-y: auto;
         }
+        .stream-body::-webkit-scrollbar { width: 4px; }
+        .stream-body::-webkit-scrollbar-track { background: transparent; }
+        .stream-body::-webkit-scrollbar-thumb { background: #2d3148; border-radius: 2px; }
 
-        .timestamp {
-            color: #666;
+        .stream-row {
+            display: grid;
+            grid-template-columns: 130px 1fr 90px;
+            gap: 12px;
+            padding: 10px 20px;
+            border-bottom: 1px solid #1e293b;
+            align-items: center;
+            animation: fadeIn .3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+        .stream-row:hover { background: #1e293b; }
+
+        .event-pill {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            white-space: nowrap;
+        }
+
+        .pill-page-view       { background: #1e3a5f; color: #60a5fa; }
+        .pill-article-click   { background: #3b1f1f; color: #f87171; }
+        .pill-article-scroll  { background: #1e3340; color: #38bdf8; }
+        .pill-session-start   { background: #1a2e22; color: #4ade80; }
+        .pill-session-end     { background: #2e1f3b; color: #c084fc; }
+        .pill-page-scroll     { background: #2a2e1a; color: #a3e635; }
+        .pill-video-click     { background: #2e1f1a; color: #fb923c; }
+        .pill-radio-listen    { background: #1a2e2e; color: #2dd4bf; }
+        .pill-share-click     { background: #2e2a1a; color: #fbbf24; }
+        .pill-article-impression { background: #1e2a3b; color: #818cf8; }
+        .pill-default         { background: #1e293b; color: #94a3b8; }
+
+        .stream-url {
             font-size: 12px;
-            font-family: 'Monaco', 'Menlo', monospace;
+            color: #475569;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .loading {
+        .stream-time {
+            font-size: 11px;
+            color: #334155;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ── Filters ── */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-select {
+            background: #1e293b;
+            border: 1px solid #2d3148;
+            color: #cbd5e1;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+        }
+        .filter-select:focus { outline: none; border-color: #e30613; }
+
+        .refresh-btn {
+            background: #e30613;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .refresh-btn:hover { background: #c2051a; }
+
+        /* ── Empty / loading states ── */
+        .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #666;
+            padding: 48px 20px;
+            color: #475569;
         }
+        .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
 
-        .error {
-            text-align: center;
-            padding: 40px;
-            color: #e30613;
+        /* ── Responsive ── */
+        @media (max-width: 1100px) {
+            .stats-row { grid-template-columns: repeat(3, 1fr); }
+            .charts-row { grid-template-columns: 1fr; }
+            .charts-row-3 { grid-template-columns: 1fr 1fr; }
         }
-
         @media (max-width: 768px) {
-            .dashboard-content {
-                padding: 16px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .filters {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .events-table {
-                font-size: 12px;
-            }
-
-            .events-table th,
-            .events-table td {
-                padding: 8px 12px;
-            }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .charts-row-3 { grid-template-columns: 1fr; }
+            .dash-title { display: none; }
         }
     </style>
 </head>
 <body>
-    <header class="dashboard-header">
-        <h1 class="dashboard-title">📊 LRT Analytics Dashboard</h1>
-        <a href="/" class="back-link">← Back to Website</a>
-    </header>
 
-    <main class="dashboard-content">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="total-events">-</div>
-                <div class="stat-label">Total Events</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="unique-sessions">-</div>
-                <div class="stat-label">Unique Sessions</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="page-views">-</div>
-                <div class="stat-label">Page Views</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="article-clicks">-</div>
-                <div class="stat-label">Article Clicks</div>
-            </div>
+<header class="dash-header">
+    <div class="dash-logo">
+        <div class="lrt-badge"><span>LRT</span><span>.lt</span></div>
+        <span class="dash-title">Analytics Dashboard</span>
+    </div>
+    <div class="header-right">
+        <span class="live-dot">LIVE</span>
+        <a href="/" class="back-link">← Back to website</a>
+    </div>
+</header>
+
+<div class="dash-body">
+
+    <!-- Stat cards -->
+    <div class="stats-row">
+        <div class="stat-card" style="--accent:#e30613">
+            <div class="stat-label">Total Events (24h)</div>
+            <div class="stat-value" id="s-total">–</div>
+            <div class="stat-sub">all tracked interactions</div>
         </div>
+        <div class="stat-card" style="--accent:#3b82f6">
+            <div class="stat-label">Unique Sessions (24h)</div>
+            <div class="stat-value" id="s-sessions">–</div>
+            <div class="stat-sub">distinct user sessions</div>
+        </div>
+        <div class="stat-card" style="--accent:#22c55e">
+            <div class="stat-label">Page Views</div>
+            <div class="stat-value" id="s-pageviews">–</div>
+            <div class="stat-sub">all time</div>
+        </div>
+        <div class="stat-card" style="--accent:#f59e0b">
+            <div class="stat-label">Article Clicks</div>
+            <div class="stat-value" id="s-clicks">–</div>
+            <div class="stat-sub">all time</div>
+        </div>
+        <div class="stat-card" style="--accent:#a855f7">
+            <div class="stat-label">Avg. Scroll Depth</div>
+            <div class="stat-value" id="s-scroll">–</div>
+            <div class="stat-sub">across all sessions</div>
+        </div>
+    </div>
 
-        <div class="events-section">
-            <div class="section-header">
-                <h2 class="section-title">Live Events Stream</h2>
-                <div class="filters">
-                    <select class="filter-select" id="event-type-filter">
-                        <option value="">All Events</option>
-                        <option value="Page View">Page Views</option>
-                        <option value="Article Click">Article Clicks</option>
-                        <option value="Navigation Click">Navigation Clicks</option>
-                        <option value="Hashtag Click">Hashtag Clicks</option>
-                        <option value="Session Start">Session Starts</option>
-                    </select>
-                    <select class="filter-select" id="limit-filter">
-                        <option value="50">Last 50</option>
-                        <option value="100" selected>Last 100</option>
-                        <option value="200">Last 200</option>
-                        <option value="500">Last 500</option>
-                    </select>
-                    <button class="refresh-btn" onclick="loadEvents()">Refresh</button>
+    <!-- Events over time + Donut -->
+    <div class="charts-row">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Events over time</span>
+                <span class="card-badge" id="timeline-range">Last 24 hours</span>
+            </div>
+            <div class="card-body">
+                <div class="chart-wrap">
+                    <canvas id="chart-timeline"></canvas>
                 </div>
             </div>
-
-            <div id="events-content">
-                <div class="loading">Loading events...</div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Event breakdown</span>
+                <span class="card-badge">All time</span>
+            </div>
+            <div class="card-body">
+                <div class="chart-wrap">
+                    <canvas id="chart-donut"></canvas>
+                </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <script>
-        let eventData = [];
-        let refreshInterval;
-
-        async function loadSummary() {
-            try {
-                const response = await fetch('/api/analytics/summary');
-                const data = await response.json();
-
-                if (data.success) {
-                    document.getElementById('total-events').textContent =
-                        data.sessionStats?.total_events || '0';
-                    document.getElementById('unique-sessions').textContent =
-                        data.sessionStats?.unique_sessions || '0';
-
-                    // Count specific event types
-                    const pageViews = data.eventTypeTotals?.find(e => e.event_type === 'Page View')?.total_count || '0';
-                    const articleClicks = data.eventTypeTotals?.find(e => e.event_type === 'Article Click')?.total_count || '0';
-
-                    document.getElementById('page-views').textContent = pageViews;
-                    document.getElementById('article-clicks').textContent = articleClicks;
-                }
-            } catch (error) {
-                console.error('Error loading summary:', error);
-            }
-        }
-
-        async function loadEvents() {
-            try {
-                const eventType = document.getElementById('event-type-filter').value;
-                const limit = document.getElementById('limit-filter').value;
-
-                const params = new URLSearchParams();
-                if (eventType) params.append('type', eventType);
-                params.append('limit', limit);
-
-                const response = await fetch(`/api/analytics?${params}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    eventData = data.events;
-                    renderEvents();
-                } else {
-                    document.getElementById('events-content').innerHTML =
-                        `<div class="error">Error: ${data.error}</div>`;
-                }
-            } catch (error) {
-                console.error('Error loading events:', error);
-                document.getElementById('events-content').innerHTML =
-                    '<div class="error">Failed to load events</div>';
-            }
-        }
-
-        function renderEvents() {
-            const content = document.getElementById('events-content');
-
-            if (eventData.length === 0) {
-                content.innerHTML = '<div class="loading">No events found</div>';
-                return;
-            }
-
-            const table = `
-                <table class="events-table">
+    <!-- Top articles + Hourly bar + Session funnel -->
+    <div class="charts-row-3">
+        <div class="card" style="grid-column: span 2;">
+            <div class="card-header">
+                <span class="card-title">Top articles by clicks</span>
+                <span class="card-badge">All time</span>
+            </div>
+            <div class="card-body" style="padding:0 0 4px;">
+                <table class="articles-table">
                     <thead>
                         <tr>
-                            <th>Timestamp</th>
-                            <th>Event Type</th>
-                            <th>Session</th>
-                            <th>Page URL</th>
-                            <th>Event Data</th>
+                            <th style="width:36px">#</th>
+                            <th>Article</th>
+                            <th>Clicks</th>
+                            <th class="bar-cell"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        ${eventData.map(event => `
-                            <tr>
-                                <td class="timestamp">${formatTimestamp(event.created_at)}</td>
-                                <td><span class="event-type">${event.event_type}</span></td>
-                                <td>${event.session_id ? event.session_id.substring(0, 8) + '...' : 'N/A'}</td>
-                                <td>${event.page_url || 'N/A'}</td>
-                                <td><div class="event-data">${JSON.stringify(event.event_data, null, 2)}</div></td>
-                            </tr>
-                        `).join('')}
+                    <tbody id="top-articles-body">
+                        <tr><td colspan="4"><div class="empty-state"><p>Loading…</p></div></td></tr>
                     </tbody>
                 </table>
-            `;
+            </div>
+        </div>
 
-            content.innerHTML = table;
-        }
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Engagement funnel</span>
+                <span class="card-badge">All time</span>
+            </div>
+            <div class="card-body">
+                <div class="chart-wrap-sm">
+                    <canvas id="chart-funnel"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function formatTimestamp(timestamp) {
-            return new Date(timestamp).toLocaleString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-        }
+    <!-- Live stream -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Live event stream</span>
+            <div class="filter-bar">
+                <select class="filter-select" id="type-filter">
+                    <option value="">All events</option>
+                    <option value="Page View">Page View</option>
+                    <option value="Article Click">Article Click</option>
+                    <option value="Article Scroll">Article Scroll</option>
+                    <option value="Article Impression">Article Impression</option>
+                    <option value="Article Read Complete">Article Read Complete</option>
+                    <option value="Video Click">Video Click</option>
+                    <option value="Radio Listen">Radio Listen</option>
+                    <option value="Share Click">Share Click</option>
+                    <option value="Session Start">Session Start</option>
+                    <option value="Page Scroll">Page Scroll</option>
+                </select>
+                <select class="filter-select" id="limit-filter">
+                    <option value="50">50 rows</option>
+                    <option value="100" selected>100 rows</option>
+                    <option value="200">200 rows</option>
+                </select>
+                <button class="refresh-btn" onclick="refresh()">↻ Refresh</button>
+            </div>
+        </div>
+        <div class="stream-body" id="stream-body">
+            <div class="empty-state">
+                <div class="icon">📡</div>
+                <p>Waiting for events…</p>
+            </div>
+        </div>
+    </div>
 
-        // Event listeners
-        document.getElementById('event-type-filter').addEventListener('change', loadEvents);
-        document.getElementById('limit-filter').addEventListener('change', loadEvents);
+</div><!-- /.dash-body -->
 
-        // Auto-refresh every 10 seconds
-        function startAutoRefresh() {
-            refreshInterval = setInterval(() => {
-                loadSummary();
-                loadEvents();
-            }, 10000);
-        }
+<script>
+// ── Chart defaults ──────────────────────────────────────────
+Chart.defaults.color = '#475569';
+Chart.defaults.borderColor = '#1e293b';
+Chart.defaults.font.family = "'Inter', sans-serif";
 
-        function stopAutoRefresh() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
+// ── Chart instances ─────────────────────────────────────────
+let timelineChart, donutChart, funnelChart;
+
+function initCharts() {
+    // Timeline
+    timelineChart = new Chart(document.getElementById('chart-timeline'), {
+        type: 'line',
+        data: { labels: [], datasets: [{
+            label: 'Events',
+            data: [],
+            borderColor: '#e30613',
+            backgroundColor: 'rgba(227,6,19,.08)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointBackgroundColor: '#e30613'
+        }]},
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: '#1e293b' }, ticks: { maxTicksLimit: 8 } },
+                y: { grid: { color: '#1e293b' }, beginAtZero: true, ticks: { precision: 0 } }
             }
         }
+    });
 
-        // Initialize
-        window.addEventListener('load', () => {
-            loadSummary();
-            loadEvents();
-            startAutoRefresh();
-        });
-
-        // Stop auto-refresh when page is hidden
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                stopAutoRefresh();
-            } else {
-                startAutoRefresh();
+    // Donut
+    donutChart = new Chart(document.getElementById('chart-donut'), {
+        type: 'doughnut',
+        data: { labels: [], datasets: [{ data: [], backgroundColor: [
+            '#e30613','#3b82f6','#22c55e','#f59e0b','#a855f7',
+            '#06b6d4','#ec4899','#84cc16','#f97316','#64748b'
+        ], borderWidth: 0, hoverOffset: 6 }]},
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 12, font: { size: 11 }, boxWidth: 10 }
+                }
             }
+        }
+    });
+
+    // Funnel (horizontal bar)
+    funnelChart = new Chart(document.getElementById('chart-funnel'), {
+        type: 'bar',
+        data: { labels: [], datasets: [{
+            data: [],
+            backgroundColor: ['#3b82f6','#e30613','#22c55e','#f59e0b','#a855f7'],
+            borderRadius: 4,
+            borderSkipped: false
+        }]},
+        options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: '#1e293b' }, beginAtZero: true, ticks: { precision: 0 } },
+                y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+            }
+        }
+    });
+}
+
+// ── Data loading ────────────────────────────────────────────
+async function loadSummary() {
+    try {
+        const res  = await fetch('/api/analytics/summary');
+        const data = await res.json();
+        if (!data.success) return;
+
+        const stats   = data.sessionStats   || {};
+        const totals  = data.eventTypeTotals || [];
+        const hourly  = data.hourlyBreakdown  || [];
+
+        // Stat cards
+        document.getElementById('s-total').textContent    = fmt(stats.total_events   || 0);
+        document.getElementById('s-sessions').textContent = fmt(stats.unique_sessions || 0);
+        document.getElementById('s-pageviews').textContent = fmt(find(totals,'Page View'));
+        document.getElementById('s-clicks').textContent    = fmt(find(totals,'Article Click'));
+
+        // Average scroll depth from Page Scroll events (rough proxy via total)
+        document.getElementById('s-scroll').textContent = '–';
+
+        // Timeline chart
+        const byHour = {};
+        hourly.forEach(r => {
+            const h = new Date(r.hour).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+            byHour[h] = (byHour[h] || 0) + parseInt(r.count);
         });
-    </script>
+        const labels = Object.keys(byHour).slice(-24);
+        timelineChart.data.labels = labels;
+        timelineChart.data.datasets[0].data = labels.map(l => byHour[l] || 0);
+        timelineChart.update();
+
+        // Donut chart
+        const top10 = totals.slice(0, 10);
+        donutChart.data.labels   = top10.map(r => r.event_type);
+        donutChart.data.datasets[0].data = top10.map(r => parseInt(r.total_count));
+        donutChart.update();
+
+        // Funnel chart
+        const funnelEvents = ['Session Start','Page View','Article Impression','Article Click','Article Read Complete'];
+        funnelChart.data.labels = funnelEvents.map(e => e.replace(' ','\n'));
+        funnelChart.data.datasets[0].data = funnelEvents.map(e => find(totals, e));
+        funnelChart.update();
+
+    } catch(e) { console.error(e); }
+}
+
+async function loadTopArticles() {
+    try {
+        const res  = await fetch('/api/analytics?type=Article%20Click&limit=500');
+        const data = await res.json();
+        if (!data.success) return;
+
+        const counts = {};
+        data.events.forEach(ev => {
+            const id    = ev.event_data?.articleId || '?';
+            const title = ev.event_data?.articleTitle || 'Unknown article';
+            const key   = id;
+            counts[key] = counts[key] || { title, clicks: 0 };
+            counts[key].clicks++;
+        });
+
+        const sorted = Object.entries(counts)
+            .sort((a,b) => b[1].clicks - a[1].clicks)
+            .slice(0, 8);
+
+        const max = sorted[0]?.[1].clicks || 1;
+        const tbody = document.getElementById('top-articles-body');
+
+        if (sorted.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><p>No article clicks yet</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = sorted.map(([id, {title, clicks}], i) => `
+            <tr>
+                <td class="art-rank">${i+1}</td>
+                <td class="art-title">${esc(title.length > 70 ? title.slice(0,70)+'…' : title)}</td>
+                <td style="font-weight:700;color:#f1f5f9">${clicks}</td>
+                <td class="bar-cell">
+                    <div class="mini-bar-wrap">
+                        <div class="mini-bar" style="width:${Math.round(clicks/max*100)}%"></div>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { console.error(e); }
+}
+
+async function loadStream() {
+    try {
+        const type  = document.getElementById('type-filter').value;
+        const limit = document.getElementById('limit-filter').value;
+        const params = new URLSearchParams({ limit });
+        if (type) params.set('type', type);
+
+        const res  = await fetch('/api/analytics?' + params);
+        const data = await res.json();
+        if (!data.success) return;
+
+        const body = document.getElementById('stream-body');
+
+        if (data.events.length === 0) {
+            body.innerHTML = `<div class="empty-state"><div class="icon">📡</div><p>No events yet — visit the website to generate some!</p></div>`;
+            return;
+        }
+
+        body.innerHTML = data.events.map(ev => `
+            <div class="stream-row">
+                <span class="event-pill ${pillClass(ev.event_type)}">${esc(ev.event_type)}</span>
+                <span class="stream-url">${esc(ev.page_url || '–')}</span>
+                <span class="stream-time">${relativeTime(ev.created_at)}</span>
+            </div>
+        `).join('');
+    } catch(e) { console.error(e); }
+}
+
+// ── Helpers ─────────────────────────────────────────────────
+function find(arr, type) {
+    return parseInt(arr.find(r => r.event_type === type)?.total_count || 0);
+}
+function fmt(n) {
+    n = parseInt(n);
+    return n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n);
+}
+function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function relativeTime(ts) {
+    const diff = Math.floor((Date.now() - new Date(ts)) / 1000);
+    if (diff < 60)  return diff + 's ago';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    return Math.floor(diff/3600) + 'h ago';
+}
+function pillClass(type) {
+    const map = {
+        'Page View':             'pill-page-view',
+        'Article Click':         'pill-article-click',
+        'Article Scroll':        'pill-article-scroll',
+        'Article Impression':    'pill-article-impression',
+        'Article Read Complete': 'pill-article-click',
+        'Session Start':         'pill-session-start',
+        'Session End':           'pill-session-end',
+        'Page Scroll':           'pill-page-scroll',
+        'Video Click':           'pill-video-click',
+        'Radio Listen':          'pill-radio-listen',
+        'Share Click':           'pill-share-click',
+    };
+    return map[type] || 'pill-default';
+}
+
+// ── Scroll depth from events ─────────────────────────────────
+async function loadScrollAvg() {
+    try {
+        const res  = await fetch('/api/analytics?type=Page%20Scroll&limit=200');
+        const data = await res.json();
+        if (!data.success || !data.events.length) return;
+        const depths = data.events.map(e => e.event_data?.maxScrollDepth || e.event_data?.scrollDepth || 0);
+        const avg = Math.round(depths.reduce((a,b) => a+b, 0) / depths.length);
+        document.getElementById('s-scroll').textContent = avg + '%';
+    } catch(e) {}
+}
+
+// ── Init & auto-refresh ──────────────────────────────────────
+function refresh() {
+    loadSummary();
+    loadTopArticles();
+    loadStream();
+    loadScrollAvg();
+}
+
+document.getElementById('type-filter').addEventListener('change', loadStream);
+document.getElementById('limit-filter').addEventListener('change', loadStream);
+
+window.addEventListener('load', () => {
+    initCharts();
+    refresh();
+    setInterval(refresh, 15000); // auto-refresh every 15s
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refresh();
+});
+</script>
 </body>
 </html>
