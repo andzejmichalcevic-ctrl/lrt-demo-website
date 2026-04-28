@@ -9,8 +9,8 @@ const analyticsConfiguration = {
     appBuild: "1",
     enableEncryption: false,
     enableDebugLogging: true,
-    flushIntervalSeconds: 5,
-    flushQueueSize: 5
+    flushIntervalSeconds: 3,
+    flushQueueSize: 1
 };
 
 // Initialize Analytics SDK

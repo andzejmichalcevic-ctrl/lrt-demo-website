@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SDK Debug Test</title>
+<script type="importmap">
+{"imports":{"@js-joda/core":"/node_modules/@js-joda/core/dist/js-joda.esm.js"}}
+</script>
+<style>
+  body { font-family: monospace; padding: 20px; background: #111; color: #eee; }
+  .ok  { color: #4caf50; }
+  .err { color: #f44336; }
+  .warn { color: #ff9800; }
+  .info { color: #2196f3; }
+  pre  { background: #222; padding: 10px; border-radius: 4px; word-wrap: break-word; white-space: pre-wrap; }
+  button { padding: 8px 16px; margin: 4px; cursor: pointer; }
+</style>
+</head>
+<body>
+<h2>Exacaster SDK Diagnostic</h2>
+<div id="log"></div>
+<br>
+<button onclick="runFetchTest()">Test plain fetch → /events</button>
+<button onclick="runSDKTest()">Test SDK track event</button>
+<button onclick="runFlushTest()">Force SDK flush</button>
+
+<script>
+function log(msg, cls) {
+  const d = document.getElementById('log');
+  const p = document.createElement('pre');
+  p.className = cls || '';
+  p.textContent = new Date().toISOString().slice(11,23) + ' ' + msg;
+  d.appendChild(p);
+  console.log(msg);
+}
+
+// Override console to capture SDK logs
+const origLog = console.log;
+const origErr = console.error;
+const origWarn = console.warn;
+console.log  = function() { origLog.apply(console, arguments);  log('[LOG] '  + Array.from(arguments).join(' '), 'info'); };
+console.error= function() { origErr.apply(console, arguments); log('[ERR] '  + Array.from(arguments).join(' '), 'err'); };
+console.warn = function() { origWarn.apply(console, arguments); log('[WARN] ' + Array.from(arguments).join(' '), 'warn'); };
+
+window.addEventListener('error', e => log('[UNCAUGHT] ' + e.message + ' @ ' + e.filename + ':' + e.lineno, 'err'));
+window.addEventListener('unhandledrejection', e => log('[PROMISE REJECTION] ' + (e.reason?.message || e.reason || 'unknown'), 'err'));
+
+log('Page loaded. Testing environment...', 'info');
+log('localStorage available: ' + (typeof localStorage !== 'undefined'), typeof localStorage !== 'undefined' ? 'ok' : 'err');
+log('fetch available: ' + (typeof fetch !== 'undefined'), typeof fetch !== 'undefined' ? 'ok' : 'err');
+log('crypto available: ' + (typeof crypto !== 'undefined'), typeof crypto !== 'undefined' ? 'ok' : 'err');
+
+// Test plain fetch
+function runFetchTest() {
+  log('Testing plain fetch to /events...', 'info');
+  fetch('/events', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      events: [{ name: 'SDK Test Fetch', type: 'track', anonymous_id: 'test-diag', timestamp: new Date().toISOString(), properties: { source: 'sdk-test-page' } }],
+      event_id: Date.now().toString()
+    })
+  })
+  .then(r => r.json())
+  .then(j => log('Fetch OK: ' + JSON.stringify(j), 'ok'))
+  .catch(e => log('Fetch FAILED: ' + e.message, 'err'));
+}
+
+// Load SDK then test
+let analyticsInstance = null;
+
+async function loadSDK() {
+  if (analyticsInstance) return analyticsInstance;
+  log('Loading SDK from /node_modules/exacaster-analytics/exacaster-analytics-library.mjs ...', 'info');
+  try {
+    const mod = await import('/node_modules/exacaster-analytics/exacaster-analytics-library.mjs');
+    log('SDK module loaded. Exports: ' + Object.keys(mod).join(', '), 'ok');
+
+    const Analytics = mod.Analytics;
+    if (!Analytics) { log('Analytics export not found!', 'err'); return null; }
+
+    log('Initializing SDK...', 'info');
+    Analytics.getInstance().initialize({
+      writeKey: 'demo-write-key-lrt-website',
+      endpoint: window.location.origin,
+      appName: 'LRT Demo Website',
+      appVersion: '1.0.0',
+      appBuild: '1',
+      enableEncryption: false,
+      enableDebugLogging: true,
+      flushIntervalSeconds: 3,
+      flushQueueSize: 1
+    });
+    log('SDK initialized!', 'ok');
+    analyticsInstance = Analytics;
+    return Analytics;
+  } catch(e) {
+    log('SDK load/init FAILED: ' + e.message + '\n' + (e.stack || ''), 'err');
+    return null;
+  }
+}
+
+async function runSDKTest() {
+  const Analytics = await loadSDK();
+  if (!Analytics) return;
+  log('Calling Analytics.getInstance().track("SDK Diagnostic Test", {...})...', 'info');
+  try {
+    Analytics.getInstance().track('SDK Diagnostic Test', {
+      source: 'sdk-test-page',
+      ts: new Date().toISOString()
+    });
+    log('track() called without throwing. Waiting for flush...', 'ok');
+    setTimeout(() => {
+      log('Check server logs above for the event arrival', 'info');
+    }, 4000);
+  } catch(e) {
+    log('track() THREW: ' + e.message, 'err');
+  }
+}
+
+async function runFlushTest() {
+  const Analytics = await loadSDK();
+  if (!Analytics) return;
+  log('Calling Analytics.getInstance().flush()...', 'info');
+  try {
+    Analytics.getInstance().flush();
+    log('flush() called', 'ok');
+  } catch(e) {
+    log('flush() THREW: ' + e.message, 'err');
+  }
+}
+
+// Auto-run fetch test on load
+runFetchTest();
+</script>
+</body>
+</html>
