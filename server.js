@@ -33,13 +33,18 @@ async function handleAnalyticsEvent(req, res) {
   try {
     const body = req.body;
 
-    // Support both Segment batch format { batch: [...] } and simple { type, properties }
+    // Exacaster SDK sends { events: [...], event_id: "..." }
+    // Also support legacy { batch: [...] } and plain { type, properties }
     let events = [];
-    if (body.batch && Array.isArray(body.batch)) {
-      // Exacaster SDK sends Segment-compatible batch format
+    if (body.events && Array.isArray(body.events)) {
+      events = body.events.map(e => ({
+        type: e.name || e.type || 'Unknown',
+        properties: { ...e.properties, ...e.context, anonymous_id: e.anonymous_id, timestamp: e.timestamp }
+      }));
+    } else if (body.batch && Array.isArray(body.batch)) {
       events = body.batch.map(e => ({
         type: e.event || e.type || e.name || 'Unknown',
-        properties: { ...e.properties, ...e.context, anonymousId: e.anonymousId }
+        properties: { ...e.properties, ...e.context }
       }));
     } else if (Array.isArray(body)) {
       events = body;
