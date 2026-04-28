@@ -492,5 +492,62 @@
         if (e.target === e.currentTarget) e.currentTarget.classList.remove('active');
     });
 </script>
+<script>
+// Direct event tracking - bypasses SDK, guaranteed to work
+function trackEvent(name, props) {
+    fetch('/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            events: [{
+                name: name,
+                type: 'track',
+                anonymous_id: localStorage.getItem('lrt_uid') || (function(){ var id = Math.random().toString(36).substr(2,9); localStorage.setItem('lrt_uid', id); return id; })(),
+                timestamp: new Date().toISOString(),
+                properties: { ...props, page: window.location.pathname, url: window.location.href }
+            }],
+            event_id: Date.now().toString()
+        })
+    }).catch(function(){});
+}
+
+// Track page view immediately
+trackEvent('Page View', { title: document.title, referrer: document.referrer });
+
+// Track article clicks
+document.addEventListener('click', function(e) {
+    var article = e.target.closest('[data-article-id]');
+    if (article) {
+        trackEvent('Article Click', {
+            article_id: article.dataset.articleId,
+            article_title: (article.querySelector('h1,h2,h3,p') || {}).textContent
+        });
+    }
+    var nav = e.target.closest('.nav-item');
+    if (nav) trackEvent('Navigation Click', { section: nav.textContent.trim() });
+
+    var hashtag = e.target.closest('.hashtag');
+    if (hashtag) trackEvent('Hashtag Click', { topic: hashtag.dataset.topic });
+
+    var radio = e.target.closest('.listen-btn');
+    if (radio) trackEvent('Radio Listen', { station: radio.dataset.radioStation, show: radio.dataset.radioShow });
+
+    var video = e.target.closest('.video-card');
+    if (video) trackEvent('Video Click', { title: video.dataset.videoTitle });
+});
+
+// Track scroll depth
+var maxScroll = 0;
+window.addEventListener('scroll', function() {
+    var depth = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+    if (depth > maxScroll + 24) { maxScroll = depth; trackEvent('Page Scroll', { depth: depth }); }
+});
+
+// Track time on page
+var startTime = Date.now();
+window.addEventListener('beforeunload', function() {
+    trackEvent('Page Exit', { time_seconds: Math.round((Date.now() - startTime) / 1000), max_scroll: maxScroll });
+});
+</script>
 </body>
 </html>
