@@ -1,4 +1,5 @@
 import { Analytics } from '/node_modules/exacaster-analytics/exacaster-analytics-library.mjs';
+import { LinkedHashMap_init_$Create$1p3p95clvi93w as KotlinLinkedHashMap } from '/node_modules/exacaster-analytics/kotlin-kotlin-stdlib.mjs';
 
 Analytics.getInstance().initialize({
     writeKey: "demo-write-key-lrt-website",
@@ -81,9 +82,11 @@ const isRecirculation = document.referrer
     ? new URL(document.referrer).hostname === window.location.hostname
     : false;
 
-// SDK requires Map<string, any> — convert plain object to Map
+// SDK requires a Kotlin LinkedHashMap — use .i2(key, value) (put) to populate
 function toMap(obj) {
-    return new Map(Object.entries(obj).filter(([, v]) => v !== null && v !== undefined));
+    const m = KotlinLinkedHashMap();
+    Object.entries(obj).forEach(([k, v]) => { if (v !== null && v !== undefined) m.i2(k, v); });
+    return m;
 }
 
 // Shared context object (plain, merged before toMap conversion)

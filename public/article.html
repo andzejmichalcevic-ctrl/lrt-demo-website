@@ -140,6 +140,12 @@
 <script type="module" src="analytics.js"></script>
 <script type="module">
 import { Analytics } from '/node_modules/exacaster-analytics/exacaster-analytics-library.mjs';
+import { LinkedHashMap_init_$Create$1p3p95clvi93w as KotlinLinkedHashMap } from '/node_modules/exacaster-analytics/kotlin-kotlin-stdlib.mjs';
+function toKMap(obj) {
+    const m = KotlinLinkedHashMap();
+    Object.entries(obj).forEach(([k, v]) => { if (v !== null && v !== undefined) m.i2(k, v); });
+    return m;
+}
 
 const ARTICLES = {
     '1': {
@@ -533,18 +539,18 @@ window.addEventListener('scroll', () => {
     if (newDepth > scrollDepth) {
         scrollDepth = newDepth;
         if (scrollDepth % 25 === 0) {
-            Analytics.getInstance().track('Article Scroll', {
+            Analytics.getInstance().track('Article Scroll', toKMap({
                 articleId, articleTitle: article.title, scrollDepth, category: article.category
-            });
+            }));
         }
     }
 });
 
 window.addEventListener('beforeunload', () => {
     const timeSpent = Math.round((Date.now() - startTime) / 1000);
-    Analytics.getInstance().track('Article Read Complete', {
+    Analytics.getInstance().track('Article Read Complete', toKMap({
         articleId, articleTitle: article.title, timeSpent, scrollDepth, category: article.category
-    });
+    }));
 });
 </script>
 </body>
