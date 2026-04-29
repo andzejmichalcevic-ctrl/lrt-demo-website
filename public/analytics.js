@@ -1,5 +1,4 @@
 import { Analytics } from '/node_modules/exacaster-analytics/exacaster-analytics-library.mjs';
-import { LinkedHashMap_init_$Create$1p3p95clvi93w as KotlinLinkedHashMap } from '/node_modules/exacaster-analytics/kotlin-kotlin-stdlib.mjs';
 
 Analytics.getInstance().initialize({
     writeKey: "demo-write-key-lrt-website",
@@ -82,21 +81,27 @@ const isRecirculation = document.referrer
     ? new URL(document.referrer).hostname === window.location.hostname
     : false;
 
-// SDK requires a Kotlin LinkedHashMap — use .i2(key, value) (put) to populate
-function toMap(obj) {
-    const m = KotlinLinkedHashMap();
-    Object.entries(obj).forEach(([k, v]) => { if (v !== null && v !== undefined) m.i2(k, v); });
-    return m;
-}
-
-// Shared context object (plain, merged before toMap conversion)
+// Shared context object
 function ctx() {
     return { sessionId, platform, deviceType, trafficSource, referrerDomain, utmSource, utmMedium, utmCampaign, pageType, contentId };
 }
 
-// Single wrapper — merges ctx + extra props and converts to Map for SDK
+// Send events directly — bypasses Kotlin Map type issues in the SDK
+let _anonId = localStorage.getItem('lrt_anon_id');
+if (!_anonId) { _anonId = Math.random().toString(36).substr(2, 9); localStorage.setItem('lrt_anon_id', _anonId); }
+
 function track(name, extra = {}) {
-    Analytics.getInstance().track(name, toMap({ ...ctx(), ...extra }));
+    const properties = Object.fromEntries(
+        Object.entries({ ...ctx(), ...extra }).filter(([, v]) => v !== null && v !== undefined && v !== '')
+    );
+    fetch('/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            events: [{ name, type: 'track', anonymous_id: _anonId, timestamp: new Date().toISOString(), properties }],
+            event_id: Date.now().toString()
+        })
+    }).catch(() => {});
 }
 
 // ── Session Start ─────────────────────────────────────────────────────────────
