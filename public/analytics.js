@@ -1,7 +1,6 @@
 import { Analytics } from '/node_modules/exacaster-analytics/exacaster-analytics-library.mjs';
 
-// Configuration for the analytics SDK
-const analyticsConfiguration = {
+Analytics.getInstance().initialize({
     writeKey: "demo-write-key-lrt-website",
     endpoint: window.location.origin,
     appName: "LRT Demo Website",
@@ -11,280 +10,323 @@ const analyticsConfiguration = {
     enableDebugLogging: true,
     flushIntervalSeconds: 3,
     flushQueueSize: 1
-};
+});
 
-// Initialize Analytics SDK
-Analytics.getInstance().initialize(analyticsConfiguration);
+// ── Shared context (computed once per page load) ─────────────────────────────
 
-// Track page view
+const sessionId = Math.random().toString(36).substr(2, 9);
+
+const visitCount = parseInt(localStorage.getItem('lrt_visit_count') || '0') + 1;
+localStorage.setItem('lrt_visit_count', String(visitCount));
+const userType = visitCount === 1 ? 'new' : visitCount < 5 ? 'returning' : 'loyal';
+
+const urlParams = new URLSearchParams(window.location.search);
+const utmSource   = urlParams.get('utm_source')   || '';
+const utmMedium   = urlParams.get('utm_medium')   || '';
+const utmCampaign = urlParams.get('utm_campaign') || '';
+
+function getReferrerDomain() {
+    try { return document.referrer ? new URL(document.referrer).hostname : ''; }
+    catch(e) { return ''; }
+}
+
+function getTrafficSource() {
+    if (utmSource) {
+        if (/facebook|twitter|instagram|linkedin|youtube|tiktok/i.test(utmSource)) return 'social';
+        return 'referral';
+    }
+    if (!document.referrer) return 'direct';
+    try {
+        const host = new URL(document.referrer).hostname.toLowerCase();
+        if (host === window.location.hostname) return 'internal';
+        if (/google|bing|yahoo|duckduckgo|yandex/.test(host)) return 'search';
+        if (/facebook|twitter|instagram|linkedin|youtube|tiktok|reddit/.test(host)) return 'social';
+        return 'referral';
+    } catch(e) { return 'direct'; }
+}
+
+function getDeviceType() {
+    const w = window.innerWidth;
+    if (w < 768) return 'mobile';
+    if (w < 1024 && 'ontouchstart' in window) return 'tablet';
+    return 'desktop';
+}
+
+function getPageType() {
+    const path = window.location.pathname;
+    if (path === '/' || path === '') return 'homepage';
+    if (path.startsWith('/article/')) {
+        const id = path.split('/').pop();
+        return id && id.startsWith('v') ? 'video' : 'article';
+    }
+    if (path.startsWith('/category/')) return 'category';
+    return 'other';
+}
+
+function getContentId() {
+    const path = window.location.pathname;
+    if (path.startsWith('/article/') || path.startsWith('/category/')) return path.split('/').pop();
+    return null;
+}
+
+function getContentGroup() {
+    const meta = document.querySelector('meta[name="content-group"]');
+    if (meta) return meta.content;
+    const category = document.querySelector('.category, .article-category, .section-label');
+    return category?.textContent?.trim() || null;
+}
+
+const platform       = 'web';
+const deviceType     = getDeviceType();
+const trafficSource  = getTrafficSource();
+const referrerDomain = getReferrerDomain();
+const pageType       = getPageType();
+const contentId      = getContentId();
+const isRecirculation = document.referrer
+    ? (new URL(document.referrer).hostname === window.location.hostname)
+    : false;
+
+// Fields added to every track() call
+const ctx = () => ({
+    sessionId,
+    platform,
+    deviceType,
+    trafficSource,
+    referrerDomain,
+    utmSource,
+    utmMedium,
+    utmCampaign,
+    pageType,
+    contentId,
+});
+
+// ── Session Start ─────────────────────────────────────────────────────────────
+Analytics.getInstance().track('Session Start', {
+    ...ctx(),
+    visitCount,
+    userType,
+    language: navigator.language,
+    screenResolution: `${screen.width}x${screen.height}`,
+});
+
+// ── Page View ─────────────────────────────────────────────────────────────────
 Analytics.getInstance().track('Page View', {
-    page: window.location.pathname,
+    ...ctx(),
     title: document.title,
     url: window.location.href,
     referrer: document.referrer,
-    timestamp: new Date().toISOString()
+    contentGroup: getContentGroup(),
+    isRecirculation,
+    visitCount,
+    userType,
 });
 
-// Track user session
-const sessionId = Math.random().toString(36).substr(2, 9);
-Analytics.getInstance().track('Session Start', {
-    sessionId: sessionId,
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-    screenResolution: `${screen.width}x${screen.height}`,
-    timestamp: new Date().toISOString()
-});
-
-// Track article clicks
-document.addEventListener('click', (event) => {
-    const article = event.target.closest('[data-article-id]');
-    if (article) {
-        const articleId = article.dataset.articleId;
-        const headline = article.querySelector('h1, h2, h3, p')?.textContent || 'Unknown';
-        const category = article.querySelector('.category')?.textContent || 'General';
-
-        Analytics.getInstance().track('Article Click', {
-            articleId: articleId,
-            articleTitle: headline,
-            category: category,
-            position: getElementPosition(article),
-            sessionId: sessionId,
-            timestamp: new Date().toISOString()
-        });
-
-        // Navigate to article page
-        setTimeout(() => {
-            window.location.href = `/article/${articleId}`;
-        }, 100);
-
-        // If it's a video article
-        if (articleId && articleId.startsWith('v')) {
-            const videoTitle = article.dataset.videoTitle || headline;
-            const videoDuration = article.dataset.videoDuration || 'Unknown';
-
-            Analytics.getInstance().track('Video Click', {
-                videoId: articleId,
-                videoTitle: videoTitle,
-                videoDuration: videoDuration,
-                sessionId: sessionId,
-                timestamp: new Date().toISOString()
-            });
-        }
-    }
-
-    // Track hashtag clicks
-    const hashtag = event.target.closest('.hashtag');
-    if (hashtag) {
-        const topic = hashtag.dataset.topic || hashtag.textContent;
-
-        Analytics.getInstance().track('Hashtag Click', {
-            topic: topic,
-            sessionId: sessionId,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    // Track navigation menu clicks
-    const navItem = event.target.closest('.nav-item');
-    if (navItem) {
-        Analytics.getInstance().track('Navigation Click', {
-            section: navItem.textContent,
-            url: navItem.href,
-            sessionId: sessionId,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    // Track radio button clicks
-    const listenBtn = event.target.closest('.listen-btn');
-    if (listenBtn) {
-        const station = listenBtn.dataset.radioStation || 'Unknown';
-        const show = listenBtn.dataset.radioShow || 'Unknown';
-
-        Analytics.getInstance().track('Radio Listen', {
-            station: station,
-            show: show,
-            sessionId: sessionId,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    // Track share button clicks
-    const shareBtn = event.target.closest('.share-btn');
-    if (shareBtn) {
-        const platform = shareBtn.dataset.share || 'Unknown';
-
-        Analytics.getInstance().track('Share Click', {
-            platform: platform,
-            articleUrl: window.location.href,
-            sessionId: sessionId,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    // Track related article clicks
-    const relatedItem = event.target.closest('.related-item');
-    if (relatedItem) {
-        const relatedId = relatedItem.dataset.relatedId || 'Unknown';
-        const relatedTitle = relatedItem.querySelector('h4')?.textContent || 'Unknown';
-
-        Analytics.getInstance().track('Related Article Click', {
-            relatedArticleId: relatedId,
-            relatedArticleTitle: relatedTitle,
-            sourceArticle: window.location.pathname,
-            sessionId: sessionId,
-            timestamp: new Date().toISOString()
-        });
-    }
-});
-
-// Track search interactions
-document.addEventListener('click', (event) => {
-    if (event.target.closest('.search-btn')) {
-        Analytics.getInstance().track('Search Opened', {
-            sessionId: sessionId,
-            timestamp: new Date().toISOString()
-        });
-    }
-});
-
-// Track scroll behavior
-let scrollTimer;
-let lastScrollPosition = 0;
+// ── Scroll milestones (25 / 50 / 75 / 100 %) ─────────────────────────────────
+const scrollMilestones = new Set();
 let maxScrollDepth = 0;
 
 window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPercentage = Math.round((currentScroll / documentHeight) * 100);
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const pct  = docH > 0 ? Math.round((window.scrollY / docH) * 100) : 0;
+    if (pct > maxScrollDepth) maxScrollDepth = pct;
 
-    if (scrollPercentage > maxScrollDepth) {
-        maxScrollDepth = scrollPercentage;
-    }
-
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => {
-        if (Math.abs(currentScroll - lastScrollPosition) > 200) {
+    [25, 50, 75, 100].forEach(m => {
+        if (pct >= m && !scrollMilestones.has(m)) {
+            scrollMilestones.add(m);
             Analytics.getInstance().track('Page Scroll', {
-                scrollDepth: scrollPercentage,
-                maxScrollDepth: maxScrollDepth,
-                page: window.location.pathname,
-                sessionId: sessionId,
-                timestamp: new Date().toISOString()
+                ...ctx(),
+                scrollDepthMilestone: m,
+                contentGroup: getContentGroup(),
             });
-            lastScrollPosition = currentScroll;
         }
-    }, 500);
-});
+    });
+}, { passive: true });
 
-// Track time on page
+// ── Page Exit ─────────────────────────────────────────────────────────────────
 const pageStartTime = Date.now();
+let linkClickCount  = 0;
 
 window.addEventListener('beforeunload', () => {
-    const timeOnPage = Math.round((Date.now() - pageStartTime) / 1000);
+    const engagementTimeSec = Math.round((Date.now() - pageStartTime) / 1000);
+    const readCompletion    = maxScrollDepth >= 80;
 
     Analytics.getInstance().track('Page Exit', {
-        timeOnPage: timeOnPage,
-        maxScrollDepth: maxScrollDepth,
-        page: window.location.pathname,
-        sessionId: sessionId,
-        timestamp: new Date().toISOString()
+        ...ctx(),
+        engagementTimeSec,
+        finalScrollDepth: maxScrollDepth,
+        readCompletion,
+        linkClickCount,
+        contentGroup: getContentGroup(),
     });
 
     Analytics.getInstance().track('Session End', {
-        sessionId: sessionId,
-        totalTimeOnSite: timeOnPage,
-        pagesViewed: 1,
-        timestamp: new Date().toISOString()
+        ...ctx(),
+        engagementTimeSec,
+        finalScrollDepth: maxScrollDepth,
+        isRecirculation,
+        visitCount,
+        userType,
     });
 
-    // Force flush before leaving
     Analytics.getInstance().flush();
 });
 
-// Helper function to get element position
-function getElementPosition(element) {
-    const parent = element.parentElement;
-    if (!parent) return 0;
+// ── Click tracking ────────────────────────────────────────────────────────────
+document.addEventListener('click', (e) => {
 
-    const siblings = Array.from(parent.children);
-    return siblings.indexOf(element) + 1;
-}
+    // Article card click
+    const article = e.target.closest('[data-article-id]');
+    if (article) {
+        const articleId    = article.dataset.articleId;
+        const articleTitle = article.querySelector('h1,h2,h3,p')?.textContent?.trim().slice(0, 150) || '';
+        const category     = article.querySelector('.category,.section-label')?.textContent?.trim() || '';
+        const isVideo      = articleId?.startsWith('v');
 
-// Track viewport visibility for articles
-const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: [0.25, 0.5, 0.75, 1.0]
-};
+        Analytics.getInstance().track('Article Click', {
+            ...ctx(),
+            articleId,
+            articleTitle,
+            contentGroup: category,
+            impressionRank: getElementPosition(article),
+            sourcePageType: pageType,
+        });
 
+        if (isVideo) {
+            Analytics.getInstance().track('Video Click', {
+                ...ctx(),
+                videoId: articleId,
+                videoTitle: article.dataset.videoTitle || articleTitle,
+                videoDuration: article.dataset.videoDuration || '',
+                contentGroup: category,
+            });
+        }
+
+        setTimeout(() => { window.location.href = `/article/${articleId}`; }, 100);
+    }
+
+    // Related article / recirculation click
+    const related = e.target.closest('.related-item');
+    if (related) {
+        Analytics.getInstance().track('Recirculation Click', {
+            ...ctx(),
+            targetContentId:    related.dataset.relatedId || '',
+            targetContentTitle: related.querySelector('h4')?.textContent?.trim() || '',
+            sourceContentId:    contentId,
+            contentGroup:       getContentGroup(),
+        });
+    }
+
+    // Share click
+    const share = e.target.closest('.share-btn');
+    if (share) {
+        Analytics.getInstance().track('Share Click', {
+            ...ctx(),
+            shareDestination: share.dataset.share || '',
+            articleId: contentId,
+            articleTitle: document.title,
+            contentGroup: getContentGroup(),
+            articleUrl: window.location.href,
+        });
+    }
+
+    // Hashtag click
+    const hashtag = e.target.closest('.hashtag');
+    if (hashtag) {
+        Analytics.getInstance().track('Hashtag Click', {
+            ...ctx(),
+            topic: hashtag.dataset.topic || hashtag.textContent?.trim(),
+            contentGroup: getContentGroup(),
+        });
+    }
+
+    // Navigation click
+    const nav = e.target.closest('.nav-item');
+    if (nav) {
+        Analytics.getInstance().track('Navigation Click', {
+            ...ctx(),
+            section: nav.textContent?.trim(),
+            targetUrl: nav.href,
+        });
+    }
+
+    // Radio listen
+    const radio = e.target.closest('.listen-btn');
+    if (radio) {
+        Analytics.getInstance().track('Radio Listen', {
+            ...ctx(),
+            station: radio.dataset.radioStation || '',
+            show:    radio.dataset.radioShow    || '',
+        });
+    }
+
+    // Link clicks within content (for link click rate req.)
+    const link = e.target.closest('a[href]');
+    if (link && !article && !related) {
+        linkClickCount++;
+        const isInternal = link.href.includes(window.location.hostname);
+        Analytics.getInstance().track('Link Click', {
+            ...ctx(),
+            linkUrl:     link.href,
+            linkText:    link.textContent?.trim().slice(0, 100) || '',
+            linkType:    isInternal ? 'internal' : 'external',
+            contentGroup: getContentGroup(),
+        });
+    }
+});
+
+// ── Article impression + view duration (viewport observer) ────────────────────
 const visibilityTracker = new Map();
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        const articleId = entry.target.dataset.articleId;
+        const el        = entry.target;
+        const articleId = el.dataset.articleId;
         if (!articleId) return;
 
-        const visibilityPercent = Math.round(entry.intersectionRatio * 100);
+        const pct = Math.round(entry.intersectionRatio * 100);
 
         if (!visibilityTracker.has(articleId)) {
-            visibilityTracker.set(articleId, {
-                maxVisibility: 0,
-                startTime: null
-            });
+            visibilityTracker.set(articleId, { maxVisibility: 0, startTime: null });
         }
-
         const tracking = visibilityTracker.get(articleId);
 
-        if (entry.isIntersecting && visibilityPercent > tracking.maxVisibility) {
-            tracking.maxVisibility = visibilityPercent;
-
-            if (!tracking.startTime) {
-                tracking.startTime = Date.now();
-            }
+        if (entry.isIntersecting && pct > tracking.maxVisibility) {
+            tracking.maxVisibility = pct;
+            if (!tracking.startTime) tracking.startTime = Date.now();
 
             Analytics.getInstance().track('Article Impression', {
-                articleId: articleId,
-                visibilityPercent: visibilityPercent,
-                articleTitle: entry.target.querySelector('h1, h2, h3')?.textContent || 'Unknown',
-                sessionId: sessionId,
-                timestamp: new Date().toISOString()
+                ...ctx(),
+                articleId,
+                articleTitle:  el.querySelector('h1,h2,h3')?.textContent?.trim().slice(0, 150) || '',
+                contentGroup:  el.querySelector('.category,.section-label')?.textContent?.trim() || '',
+                visibilityPct: pct,
+                impressionRank: getElementPosition(el),
             });
         } else if (!entry.isIntersecting && tracking.startTime) {
-            const viewDuration = Math.round((Date.now() - tracking.startTime) / 1000);
+            const viewDurationSec = Math.round((Date.now() - tracking.startTime) / 1000);
 
             Analytics.getInstance().track('Article View Duration', {
-                articleId: articleId,
-                viewDuration: viewDuration,
-                maxVisibility: tracking.maxVisibility,
-                sessionId: sessionId,
-                timestamp: new Date().toISOString()
+                ...ctx(),
+                articleId,
+                viewDurationSec,
+                maxVisibilityPct: tracking.maxVisibility,
+                readCompletion:   tracking.maxVisibility >= 80,
+                contentGroup:     el.querySelector('.category,.section-label')?.textContent?.trim() || '',
             });
 
             tracking.startTime = null;
         }
     });
-}, observerOptions);
+}, { threshold: [0.25, 0.5, 0.75, 1.0] });
 
-// Observe all articles
 document.addEventListener('DOMContentLoaded', () => {
-    const articles = document.querySelectorAll('[data-article-id]');
-    articles.forEach(article => observer.observe(article));
-
-    // Log SDK initialization
-    console.log('Exacaster Analytics SDK initialized for LRT Demo Website');
-    console.log('Tracking enabled for:', {
-        pageViews: true,
-        articleClicks: true,
-        scrollBehavior: true,
-        timeOnPage: true,
-        articleImpressions: true,
-        videoClicks: true,
-        radioListens: true,
-        shareActions: true,
-        relatedArticles: true
-    });
+    document.querySelectorAll('[data-article-id]').forEach(el => observer.observe(el));
 });
 
-// Export Analytics instance for use in other modules
+// ── Helper ────────────────────────────────────────────────────────────────────
+function getElementPosition(el) {
+    const siblings = Array.from(el.parentElement?.children || []);
+    return siblings.indexOf(el) + 1;
+}
+
 export { Analytics };
