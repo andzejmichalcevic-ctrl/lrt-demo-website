@@ -19,6 +19,35 @@
             capture_pageleave: true,
             loaded: function(ph) { console.log('PostHog ready:', ph.get_distinct_id()); }
         });
+
+        // A/B: apply hero layout variant + track exposure in Supabase
+        posthog.onFeatureFlags(function() {
+            var variant = posthog.getFeatureFlag('homepage-hero-layout') || 'control';
+            localStorage.setItem('lrt_ab_hero', variant);
+            if (variant === 'compact') {
+                document.body.classList.add('ab-compact');
+            }
+            // Send exposure event to our own analytics for Superset correlation
+            var anonId = localStorage.getItem('lrt_anon_id') || 'anonymous';
+            fetch('/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    events: [{
+                        name: 'AB Test Exposure',
+                        type: 'track',
+                        anonymous_id: anonId,
+                        timestamp: new Date().toISOString(),
+                        properties: {
+                            experiment: 'homepage-hero-layout',
+                            variant: variant,
+                            pageType: 'homepage'
+                        }
+                    }],
+                    event_id: Date.now().toString()
+                })
+            }).catch(function() {});
+        });
     </script>
 </head>
 <body>

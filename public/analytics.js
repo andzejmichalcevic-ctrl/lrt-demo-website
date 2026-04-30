@@ -107,7 +107,8 @@ let _anonId = localStorage.getItem('lrt_anon_id');
 if (!_anonId) { _anonId = Math.random().toString(36).substr(2, 9); localStorage.setItem('lrt_anon_id', _anonId); }
 
 function ctx() {
-    return { sessionId, platform, deviceType, trafficSource, referrerDomain, utmSource, utmMedium, utmCampaign, pageType, contentId };
+    const abVariant = localStorage.getItem('lrt_ab_hero') || '';
+    return { sessionId, platform, deviceType, trafficSource, referrerDomain, utmSource, utmMedium, utmCampaign, pageType, contentId, ...(abVariant ? { abVariant } : {}) };
 }
 
 function track(name, extra = {}) {
