@@ -38,7 +38,7 @@ async function handleAnalyticsEvent(req, res) {
     let events = [];
     if (body.events && Array.isArray(body.events)) {
       events = body.events.map(e => ({
-        type: e.name || e.type || 'Unknown',
+        type: e.event_name || e.name || e.type || 'Unknown',
         properties: { ...e.properties, ...e.context, anonymous_id: e.anonymous_id, timestamp: e.timestamp }
       }));
     } else if (body.batch && Array.isArray(body.batch)) {
