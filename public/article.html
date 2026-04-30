@@ -487,6 +487,9 @@ const urlParts = window.location.pathname.split('/');
 const articleId = urlParts[urlParts.length - 1] || '1';
 const article = ARTICLES[articleId] || ARTICLES['1'];
 
+// Expose category to analytics.js before Page View fires
+document.body.dataset.contentGroup = article.category;
+
 // Set page content
 document.title = article.title + ' – LRT.lt';
 document.getElementById('article-title').textContent = article.title;
@@ -544,14 +547,14 @@ window.addEventListener('scroll', () => {
     if (newDepth > scrollDepth) {
         scrollDepth = newDepth;
         if (scrollDepth % 25 === 0) {
-            trackDirect('Article Scroll', { articleId, articleTitle: article.title, scrollDepth, category: article.category });
+            trackDirect('Article Scroll', { articleId, articleTitle: article.title, scrollDepth, contentGroup: article.category });
         }
     }
 });
 
 window.addEventListener('beforeunload', () => {
     const timeSpent = Math.round((Date.now() - startTime) / 1000);
-    trackDirect('Article Read Complete', { articleId, articleTitle: article.title, timeSpent, scrollDepth, category: article.category });
+    trackDirect('Article Read Complete', { articleId, articleTitle: article.title, timeSpent, scrollDepth, contentGroup: article.category });
 });
 </script>
 </body>
